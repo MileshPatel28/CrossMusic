@@ -1,6 +1,7 @@
 export const theme = {
   colors: {
     background: "rgb(21,21,21)",
+    darkBackground: "rgb(16,16,16)",
 
     text: "rgb(21,97,255)",
     lightText: "rgb(98,128,255)",
