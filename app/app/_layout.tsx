@@ -1,9 +1,13 @@
-import { IconSymbol } from "@/app-example/components/ui/icon-symbol";
 import { theme } from "@/components/theme";
-import { Stack, Tabs } from "expo-router";
 import Feather from '@expo/vector-icons/Feather';
+import { Tabs } from "expo-router";
+import TrackPlayer from 'react-native-track-player';
+import service from './service.js'
 
-export default function RootLayout() {
+export default async function RootLayout() {
+  TrackPlayer.registerPlaybackService(() => service);
+  await TrackPlayer.setupPlayer()
+
   return <Tabs
   screenOptions={{
     tabBarActiveTintColor: theme.colors.lightText,
