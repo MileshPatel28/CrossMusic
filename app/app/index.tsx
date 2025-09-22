@@ -1,15 +1,20 @@
-import { Text, View } from "react-native";
+import { theme } from "@/components/theme";
+import { ThemedText } from "@/components/themed/themed-text";
+import { ThemedView } from "@/components/themed/themed-view";
+import { StyleSheet } from "react-native";
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <ThemedView style={styles.container}>
+      <ThemedText> Cross Music! </ThemedText>
+    </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  }
+});
