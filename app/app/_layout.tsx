@@ -1,12 +1,22 @@
 import { theme } from "@/components/theme";
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from "expo-router";
+import { useEffect } from "react";
 import TrackPlayer from 'react-native-track-player';
-import service from './service.js'
 
-export default async function RootLayout() {
-  TrackPlayer.registerPlaybackService(() => service);
-  await TrackPlayer.setupPlayer()
+TrackPlayer.registerPlaybackService(() => require('./service'));
+
+export default function RootLayout() {
+
+  useEffect(() => {
+    async function setupPlayer() {
+      await TrackPlayer.setupPlayer()
+    }
+
+    setupPlayer();
+    
+  })
+
 
   return <Tabs
   screenOptions={{
