@@ -60,17 +60,17 @@ export default function Index() {
     }
   };
 
-  const previousSong = () => {
-    try {
-      TrackPlayer.skipToPrevious();
-    }catch{}
-  }
+const previousSong = async () => {
+  try {
+    await TrackPlayer.skipToPrevious();
+  } catch  {}
+};
 
-  const nextSong = () => {
-    try {
-      TrackPlayer.skipToNext();
-    }catch{}
-  }
+const nextSong = async () => {
+  try {
+    await TrackPlayer.skipToNext();
+  } catch  {}
+};
 
 
 
