@@ -58,3 +58,8 @@ android/app/build/
 android/build/
 *.keystore
 *.jks
+
+
+
+# Project Specific
+./app/assets/test_music/*
