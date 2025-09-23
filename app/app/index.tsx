@@ -15,6 +15,9 @@ export default function Index() {
       <Button onPressIn={() => {
         TrackPlayer.pause()
       }}>Stop</Button>
+
+      <Button onPressIn={() => { TrackPlayer.skipToNext() }}> {'>'} </Button>
+      <Button onPressIn={() => { TrackPlayer.skipToPrevious() }}> {'<'} </Button>
     </ThemedView>
   );
 }
