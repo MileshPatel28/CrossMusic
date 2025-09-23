@@ -4,13 +4,26 @@ import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import TrackPlayer from 'react-native-track-player';
 
-TrackPlayer.registerPlaybackService(() => require('./service'));
+TrackPlayer.registerPlaybackService(() => require('./service.js'));
 
 export default function RootLayout() {
 
   useEffect(() => {
     async function setupPlayer() {
       await TrackPlayer.setupPlayer()
+
+      const track = {
+         url: require('../assets/test_music/St.Cliche - Spectral.mp3'), 
+        title: 'Avaritia',
+        artist: 'deadmau5',
+        album: 'while(1<2)',
+        genre: 'Progressive House, Electro House',
+        date: '2014-05-20T07:00:00+00:00', 
+        duration: 402 
+      }
+
+      await TrackPlayer.add([track])
+
     }
 
     setupPlayer();
@@ -28,14 +41,14 @@ export default function RootLayout() {
     <Tabs.Screen
       name="index"
       options={{
-        title: "Home",
+        title: "",
         tabBarIcon: ({ color }) => <Feather size={28} name="music" color={color} />,
       }}
     />
     <Tabs.Screen
       name="settings"
       options={{
-        title: "Settings",
+        title: "",
         tabBarIcon: ({ color }) => <Feather size={28} name="settings" color={color} />,
       }}
     />

@@ -1,5 +1,6 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+
 # dependencies
 node_modules/
 
@@ -48,3 +49,12 @@ expo-env.d.ts
 # @end expo-cli
 
 /app/app-example/*
+
+# Android
+android/.gradle/
+android/.idea/
+android/local.properties
+android/app/build/
+android/build/
+*.keystore
+*.jks
