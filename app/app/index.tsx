@@ -1,32 +1,111 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
-import { Button } from "@react-navigation/elements";
-import { StyleSheet, View, Animated } from "react-native";
-import TrackPlayer from "react-native-track-player";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import TrackPlayer, { State, useProgress } from "react-native-track-player";
 import * as Progress from 'react-native-progress'
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
+
+
+
+function MyPlayerBar() {
+  const progress = useProgress();
+
+const formatTime = (seconds: number) => {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  if (hrs > 0) {
+    return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+};
+
+  return (
+    <ThemedView
+        style={[
+          styles.container,
+          {
+            flexDirection: 'row',
+            alignItems: "center",
+            justifyContent: "space-between"
+          }
+        ]}>
+
+      <ThemedText>{formatTime(progress.position)}</ThemedText>
+      <Progress.Bar style={{ marginHorizontal: 16 }}
+        progress={progress.duration ? progress.position / progress.duration : 0}
+        width={200}
+      />
+      <ThemedText>{formatTime(progress.duration)}</ThemedText>
+    </ThemedView>
+  );
+}
 
 
 export default function Index() {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const togglePlayPause = async () => {
+    const playbackState = await TrackPlayer.getPlaybackState();
+
+    if (playbackState.state === State.Playing) {
+      await TrackPlayer.pause();
+      setIsPlaying(false);
+    } else {
+      await TrackPlayer.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const previousSong = () => {
+    try {
+      TrackPlayer.skipToPrevious();
+    }catch{}
+  }
+
+  const nextSong = () => {
+    try {
+      TrackPlayer.skipToNext();
+    }catch{}
+  }
+
+
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText> Cross Music! </ThemedText>
 
+      <ThemedView
+        style={[
+          styles.container,
+          {
+            flexDirection: 'row'
+          }
+        ]}>
+
+        <TouchableOpacity onPressIn={previousSong}>
+          <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPressIn={togglePlayPause}>
+          <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPressIn={nextSong}>
+          <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color="white" />
+        </TouchableOpacity>
+
+      </ThemedView>
+
+
+      <MyPlayerBar></MyPlayerBar>
+
+
+
       
-
-      <Button onPressIn={() => {
-        TrackPlayer.play()
-      }}>Play</Button>
-
-      <Button onPressIn={() => {
-        TrackPlayer.pause()
-      }}>Stop</Button>
-
-      <Button onPressIn={() => { TrackPlayer.skipToNext() }}> {'>'} </Button>
-      <Button onPressIn={() => { TrackPlayer.skipToPrevious() }}> {'<'} </Button>
-      
-      <Progress.Bar width={200} progress={0.5}></Progress.Bar>
 
     </ThemedView>
   );
