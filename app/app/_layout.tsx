@@ -15,7 +15,6 @@ export default function RootLayout() {
       const track1 = {
          url: require('../assets/test_music/St.Cliche - Spectral.mp3'), 
         title: 'Avaritia',
-        artist: 'deadmau5',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
@@ -25,7 +24,6 @@ export default function RootLayout() {
       const track2 = {
          url: require('../assets/test_music/Ivan B - Sweaters.mp3'), 
         title: 'Avaritia',
-        artist: 'deadmau5',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
@@ -35,7 +33,6 @@ export default function RootLayout() {
       const track3 = {
          url: require('../assets/test_music/Blank.mp3'), 
         title: 'Avaritia',
-        artist: 'deadmau5',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
