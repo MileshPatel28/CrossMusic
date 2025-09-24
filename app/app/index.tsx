@@ -1,27 +1,55 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import TrackPlayer, { State, useProgress } from "react-native-track-player";
-import * as Progress from 'react-native-progress'
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Slider from "@react-native-community/slider";
+import { theme } from "@/components/theme";
 
 
+function VolumeSlider() {
+  return (
+    <ThemedView
+      style={{
+        flexDirection: 'row',
+        justifyContent: "flex-start",
+        alignItems: 'center',
+        width: '100%'
+      }}>
+        <MaterialIcons name="volume-up" size={24} color={theme.colors.text} />
+        <Slider
+        style={{ flex: 0.25, height: 40, marginHorizontal: 16 }}
+        minimumValue={0}
+        maximumValue={100}
+        value={50}
+        minimumTrackTintColor={theme.colors.text}  
+        maximumTrackTintColor={theme.colors.darkBackground}
+        thumbTintColor={theme.colors.lightText}
+        onSlidingComplete={async (value) => {
+          await TrackPlayer.seekTo(value); 
+        }}
+      />
+
+    </ThemedView>
+    
+  );
+}
 
 
 function MyPlayerBar() {
   const progress = useProgress();
 
-const formatTime = (seconds: number) => {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
+  const formatTime = (seconds: number) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
 
-  if (hrs > 0) {
-    return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }
-  return `${mins}:${String(secs).padStart(2, "0")}`;
-};
+    if (hrs > 0) {
+      return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+    return `${mins}:${String(secs).padStart(2, "0")}`;
+  };
 
   return (
     <ThemedView
@@ -29,15 +57,24 @@ const formatTime = (seconds: number) => {
           styles.container,
           {
             flexDirection: 'row',
+            width: '100%',
+            padding: 16,
             alignItems: "center",
-            justifyContent: "space-between"
           }
         ]}>
 
       <ThemedText>{formatTime(progress.position)}</ThemedText>
-      <Progress.Bar style={{ marginHorizontal: 16 }}
-        progress={progress.duration ? progress.position / progress.duration : 0}
-        width={200}
+      <Slider
+        style={{ flex: 1, height: 40, marginHorizontal: 16 }}
+        minimumValue={0}
+        maximumValue={progress.duration || 0}
+        value={progress.position}
+        minimumTrackTintColor={theme.colors.text}  
+        maximumTrackTintColor={theme.colors.darkBackground}
+        thumbTintColor={theme.colors.lightText}
+        onSlidingComplete={async (value) => {
+          await TrackPlayer.seekTo(value); 
+        }}
       />
       <ThemedText>{formatTime(progress.duration)}</ThemedText>
     </ThemedView>
@@ -75,37 +112,48 @@ const nextSong = async () => {
 
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText> Cross Music! </ThemedText>
+    <ThemedView style={{
+      flex: 1,
+      justifyContent: "flex-end"
+    }}>
+
 
       <ThemedView
         style={[
-          styles.container,
           {
-            flexDirection: 'row'
+            flexDirection: 'column',
+            alignItems: 'center',
           }
         ]}>
 
-        <TouchableOpacity onPressIn={previousSong}>
-          <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color="white" />
-        </TouchableOpacity>
+        <VolumeSlider/>
 
-        <TouchableOpacity onPressIn={togglePlayPause}>
-          <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color="white" />
-        </TouchableOpacity>
+        <ThemedView
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+            }
+          ]}>
 
-        <TouchableOpacity onPressIn={nextSong}>
-          <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity onPressIn={previousSong}>
+            <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPressIn={togglePlayPause}>
+            <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPressIn={nextSong}>
+            <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+        </ThemedView>
+
+
+        <MyPlayerBar></MyPlayerBar>
+
 
       </ThemedView>
-
-
-      <MyPlayerBar></MyPlayerBar>
-
-
-
-      
 
     </ThemedView>
   );
@@ -114,7 +162,7 @@ const nextSong = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
+
   },
 });
