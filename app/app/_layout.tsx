@@ -11,9 +11,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     
-
     async function setupPlayer() {
-      await TrackPlayer.setupPlayer()
+      await TrackPlayer.setupPlayer();
       syncTrackPlayer();
     }
 
