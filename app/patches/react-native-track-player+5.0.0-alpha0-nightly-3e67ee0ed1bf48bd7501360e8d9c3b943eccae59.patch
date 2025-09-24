@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-track-player/lib/module/NativeTrackPlayer.web.js b/node_modules/react-native-track-player/lib/module/NativeTrackPlayer.web.js
+index 7bece8f..40fbda1 100644
+--- a/node_modules/react-native-track-player/lib/module/NativeTrackPlayer.web.js
++++ b/node_modules/react-native-track-player/lib/module/NativeTrackPlayer.web.js
+@@ -1,6 +1,6 @@
+ "use strict";
+ 
+-const module = require('../web').default;
++const module = require('../../web').default;
+ export const Constants = module?.getConstants();
+ export default module;
+ //# sourceMappingURL=NativeTrackPlayer.web.js.map
+\ No newline at end of file
