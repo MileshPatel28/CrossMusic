@@ -1,21 +1,22 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import TrackPlayer, { State, useProgress } from "react-native-track-player";
+import TrackPlayer, { State, useActiveTrack, useProgress } from "react-native-track-player";
 import {  useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from "@react-native-community/slider";
 import { theme } from "@/components/theme";
 
-
 function VolumeSlider() {
   return (
     <ThemedView
       style={{
+        top: 35,
         flexDirection: 'row',
         justifyContent: "flex-start",
         alignItems: 'center',
-        width: '100%'
+        width: '100%',
+        marginTop: 8, // optional spacing
       }}>
         <MaterialIcons name="volume-up" size={24} color={theme.colors.text} />
         <Slider
@@ -83,6 +84,8 @@ function MyPlayerBar() {
 
 
 export default function Index() {
+
+  const activeTrack = useActiveTrack();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlayPause = async () => {
@@ -130,8 +133,7 @@ const nextSong = async () => {
 
 
 
-
-
+        <ThemedText style={{ zIndex: 2 }}> {activeTrack?.title} </ThemedText> {/* DOES NOT WORKS HERE */}
 
         <VolumeSlider/>
 

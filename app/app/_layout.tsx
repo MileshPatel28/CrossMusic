@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import TrackPlayer from 'react-native-track-player';
 
+
 TrackPlayer.registerPlaybackService(() => require('./service.js'));
 
 export default function RootLayout() {
@@ -14,7 +15,7 @@ export default function RootLayout() {
 
       const track1 = {
          url: require('../assets/test_music/St.Cliche - Spectral.mp3'), 
-        title: 'Avaritia',
+        title: 'St.Cliche - Spectral',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
@@ -23,7 +24,7 @@ export default function RootLayout() {
 
       const track2 = {
          url: require('../assets/test_music/Ivan B - Sweaters.mp3'), 
-        title: 'Avaritia',
+        title: 'Ivan B - Sweaters',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
@@ -32,7 +33,7 @@ export default function RootLayout() {
 
       const track3 = {
          url: require('../assets/test_music/Blank.mp3'), 
-        title: 'Avaritia',
+        title: 'Blank',
         album: 'while(1<2)',
         genre: 'Progressive House, Electro House',
         date: '2014-05-20T07:00:00+00:00', 
