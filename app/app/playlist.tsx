@@ -52,9 +52,12 @@ export default function Playlists(){
                     marginVertical: 10,
                     padding: 10
                 }}
-            >
+            >  
+           
                 {tracks.map((track, index) => (
-                    singleSongTile(track)
+                    <React.Fragment key={track.id ?? index}>
+                        {singleSongTile(track)}
+                    </React.Fragment>
                 ))}
             </ThemedView>
         );
@@ -65,11 +68,11 @@ export default function Playlists(){
 
         async function skipToSong() {
             const queue = await TrackPlayer.getQueue();
-            const index = queue.findIndex((t) => t.id === singleTrack.id);
+            const index = queue.findIndex((t) => {
+                return t.url === singleTrack.url
+            });
 
             if(index !== -1) {
-                console.log("INDEX IS " + index)
-            
                 await TrackPlayer.skip(index);
                 await TrackPlayer.play()
                 router.push('/')
