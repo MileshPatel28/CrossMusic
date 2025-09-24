@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import TrackPlayer, { State, useActiveTrack, useProgress } from "react-native-track-player";
-import {  useState } from "react";
+import {  act, useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from "@react-native-community/slider";
 import { theme } from "@/components/theme";
@@ -155,7 +155,7 @@ const nextSong = async () => {
 
 
 
-          <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {activeTrack?.title} </ThemedText> 
+          <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {(activeTrack != null) ? activeTrack.title : "<No Songs>"} </ThemedText> 
 
           <VolumeSlider/>
 

@@ -16,28 +16,16 @@ export default function RootLayout() {
       const track1 = {
          url: require('../assets/test_music/St.Cliche - Spectral.mp3'), 
         title: 'St.Cliche - Spectral',
-        album: 'while(1<2)',
-        genre: 'Progressive House, Electro House',
-        date: '2014-05-20T07:00:00+00:00', 
-        duration: 402 
       }
 
       const track2 = {
          url: require('../assets/test_music/Ivan B - Sweaters.mp3'), 
         title: 'Ivan B - Sweaters',
-        album: 'while(1<2)',
-        genre: 'Progressive House, Electro House',
-        date: '2014-05-20T07:00:00+00:00', 
-        duration: 402 
       }
 
       const track3 = {
          url: require('../assets/test_music/Blank.mp3'), 
         title: 'Blank',
-        album: 'while(1<2)',
-        genre: 'Progressive House, Electro House',
-        date: '2014-05-20T07:00:00+00:00', 
-        duration: 402 
       }
 
       await TrackPlayer.add([track1,track2,track3])
