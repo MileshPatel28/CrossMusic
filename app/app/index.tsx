@@ -109,6 +109,9 @@ export default function MusicPlayer() {
     async function loadQueue() {
       setQueueLength((await TrackPlayer.getQueue()).length)
       setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
+
+      const playbackState = await TrackPlayer.getPlaybackState();
+      setIsPlaying((playbackState.state === State.Playing) ? true : false)
     }
 
     

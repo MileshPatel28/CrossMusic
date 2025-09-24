@@ -12,6 +12,7 @@ import TrackPlayer from "react-native-track-player";
 import { TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import * as DocumentPicker from "expo-document-picker";
+import { router } from "expo-router";
 
 
 
@@ -60,10 +61,29 @@ export default function Playlists(){
     }
 
     function singleSongTile(singleTrack:any) {
+
+
+        async function skipToSong() {
+            const queue = await TrackPlayer.getQueue();
+            const index = queue.findIndex((t) => t.id === singleTrack.id);
+
+            if(index !== -1) {
+                console.log("INDEX IS " + index)
+            
+                await TrackPlayer.skip(index);
+                await TrackPlayer.play()
+                router.push('/')
+
+            }
+
+        }   
+
         return(
             <ThemedView 
                 style={{
                     borderColor: theme.colors.outline,
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     borderWidth: 2,
                     borderCurve: 'circular',
                     borderRadius: 10,
@@ -72,9 +92,13 @@ export default function Playlists(){
                 }}>
                 <ThemedText
                     style={{
+                        flex: 1,
                         fontSize: 20,
                     }}
                 > {singleTrack.title} </ThemedText>
+                <TouchableOpacity onPress={skipToSong}>
+                    <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
             </ThemedView>
         )
     }

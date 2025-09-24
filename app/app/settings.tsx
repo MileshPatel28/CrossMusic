@@ -11,7 +11,7 @@ export default function Settings() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText> Settings! </ThemedText>
+      <ThemedText> Settings! (TBA) </ThemedText>
     </ThemedView>
   );
 }
