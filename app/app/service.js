@@ -1,9 +1,11 @@
 import TrackPlayer, { Event } from 'react-native-track-player';
 
-export let trackName = ""
 
 module.exports = async function() {
+  
   try {
+    await TrackPlayer.setupPlayer()
+
     TrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
     TrackPlayer.addEventListener(Event.RemotePause, () => TrackPlayer.pause());
     TrackPlayer.addEventListener(Event.RemoteNext, () => TrackPlayer.skipToNext());

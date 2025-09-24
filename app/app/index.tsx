@@ -1,13 +1,12 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import TrackPlayer, { State, useActiveTrack, useProgress } from "react-native-track-player";
-import {  act, useState } from "react";
+import TrackPlayer, { Event,State, useActiveTrack, useProgress } from "react-native-track-player";
+import {  useEffect, useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from "@react-native-community/slider";
 import { theme } from "@/components/theme";
 import Feather from "@expo/vector-icons/build/Feather";
-
 
 function MusicVisualizer() {
   return (
@@ -100,8 +99,29 @@ function MyPlayerBar() {
 
 export default function MusicPlayer() {
 
+  const [queueLength, setQueueLength] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const activeTrack = useActiveTrack();
   const [isPlaying, setIsPlaying] = useState(false);
+
+
+  useEffect(() => {
+    async function loadQueue() {
+      setQueueLength((await TrackPlayer.getQueue()).length)
+      setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
+    }
+
+    
+    // Try Catch because of Expo routing
+    try {
+      loadQueue();
+
+      TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, async () => {
+        setQueueLength((await TrackPlayer.getQueue()).length)
+        setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
+      })
+    }catch{}
+  })
 
   const togglePlayPause = async () => {
     const playbackState = await TrackPlayer.getPlaybackState();
@@ -115,17 +135,21 @@ export default function MusicPlayer() {
     }
   };
 
-const previousSong = async () => {
-  try {
-    await TrackPlayer.skipToPrevious();
-  } catch  {}
-};
+  const previousSong = async () => {
+    try {
+      await TrackPlayer.skipToPrevious();
+    } catch  {
+      await TrackPlayer.skip((await TrackPlayer.getQueue()).length - 1)
+    }
+  };
 
-const nextSong = async () => {
-  try {
-    await TrackPlayer.skipToNext();
-  } catch  {}
-};
+  const nextSong = async () => {
+    try {
+      await TrackPlayer.skipToNext();
+    } catch  {
+      await TrackPlayer.skip(0)
+    }
+  };
 
 
 
@@ -157,6 +181,18 @@ const nextSong = async () => {
 
           <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {(activeTrack != null) ? activeTrack.title : "<No Songs>"} </ThemedText> 
 
+          <ThemedView 
+            style={{ 
+              top: 50,
+              flexDirection: 'row',
+              justifyContent: "flex-end",
+              alignItems: 'center',
+              width: '100%',
+              marginEnd: 50,
+            }}>
+            <ThemedText style={{fontSize: 24}}> {currentIndex} / {queueLength} </ThemedText>
+          </ThemedView>
+          
           <VolumeSlider/>
 
           <ThemedView

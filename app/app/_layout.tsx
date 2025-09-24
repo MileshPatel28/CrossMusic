@@ -12,9 +12,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     async function setupPlayer() {
-      await TrackPlayer.setupPlayer()
-
-
       if(Platform.OS === "web"){
         const baseUrl = "http://localhost:3000";
         const res = await fetch(`${baseUrl}/api/songs`);
