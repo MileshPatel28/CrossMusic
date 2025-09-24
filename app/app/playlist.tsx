@@ -9,6 +9,12 @@ import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";
 import TrackPlayer from "react-native-track-player";
+import { TouchableOpacity } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import * as DocumentPicker from "expo-document-picker";
+
+
+
 
 export default function Playlists(){
     const [activeSections, setActiveSections] = useState<number[]>([]);
@@ -22,6 +28,21 @@ export default function Playlists(){
         loadTracks();
     }, []);
 
+      async function uploadSong() {
+        const res = await DocumentPicker.getDocumentAsync({
+          type: "audio/mpeg", 
+          multiple: true
+        });
+    
+        if (res.canceled) return;
+    
+        for(const file of res.assets){
+          console.log(file);
+        }
+    
+    
+      }
+    
 
     function createAllSongList() {
         return (
@@ -83,6 +104,9 @@ export default function Playlists(){
                             }}>
                             {section.title}
                         </ThemedText>
+                        <TouchableOpacity style={{marginLeft:'auto'}} onPress={uploadSong}>
+                            <Feather name="plus" size={24} color={theme.colors.lightText} />
+                        </TouchableOpacity>
                     </ThemedView>
 
                 )}
@@ -91,7 +115,6 @@ export default function Playlists(){
                 )}
                 onChange={setActiveSections}
             />
-
             
 
         </ThemedView>
