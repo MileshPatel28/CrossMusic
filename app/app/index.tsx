@@ -6,6 +6,21 @@ import {  useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from "@react-native-community/slider";
 import { theme } from "@/components/theme";
+import Feather from "@expo/vector-icons/build/Feather";
+
+
+function MusicVisualizer() {
+  return (
+    <ThemedView style={{
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1
+    }}>
+      <Feather size={100} name="music" color={theme.colors.darkBackground} />
+    </ThemedView>
+  )
+}
+
 
 function VolumeSlider() {
   return (
@@ -16,7 +31,7 @@ function VolumeSlider() {
         justifyContent: "flex-start",
         alignItems: 'center',
         width: '100%',
-        marginTop: 8, // optional spacing
+        marginTop: 8, 
       }}>
         <MaterialIcons name="volume-up" size={24} color={theme.colors.text} />
         <Slider
@@ -115,64 +130,71 @@ const nextSong = async () => {
 
 
   return (
+
     <ThemedView style={{
       flex: 1,
-      justifyContent: "flex-end"
     }}>
 
+      <MusicVisualizer></MusicVisualizer>
 
-      <ThemedView
-        style={[
-          {
-            flexDirection: 'column',
-            alignItems: 'center',
-          }
-        ]}>
+      <ThemedView style={{
+        justifyContent: "flex-end"
+      }}>
 
-
-
-
-
-        <ThemedText style={{ zIndex: 2 }}> {activeTrack?.title} </ThemedText> {/* DOES NOT WORKS HERE */}
-
-        <VolumeSlider/>
 
         <ThemedView
           style={[
             {
-              flexDirection: 'row',
+              flexDirection: 'column',
               alignItems: 'center',
             }
           ]}>
 
-          <TouchableOpacity onPressIn={previousSong}>
-            <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
 
-          <TouchableOpacity onPressIn={togglePlayPause}>
-            <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color={theme.colors.text} />
-          </TouchableOpacity>
 
-          <TouchableOpacity onPressIn={nextSong}>
-            <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
+
+
+          <ThemedText style={{ zIndex: 2 }}> {activeTrack?.title} </ThemedText> 
+          
+          <VolumeSlider/>
+
+          <ThemedView
+            style={[
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+              }
+            ]}>
+
+            <TouchableOpacity onPressIn={previousSong}>
+              <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPressIn={togglePlayPause}>
+              <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPressIn={nextSong}>
+              <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+          </ThemedView>
+
+
+
+
+
+
+
+
+
+
+
+
+          <MyPlayerBar></MyPlayerBar>
+
         </ThemedView>
 
-
-
-
-
-
-
-
-
-
-
-
-        <MyPlayerBar></MyPlayerBar>
-
       </ThemedView>
-
     </ThemedView>
   );
 }

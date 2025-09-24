@@ -9,7 +9,8 @@ export function ThemedText(props: TextProps){
     return(
         <Text
         style={[{
-            color: theme.colors.text
+            color: theme.colors.text,
+            fontFamily: theme.fonts.regular
         },style]}
         {...rest}
         />
