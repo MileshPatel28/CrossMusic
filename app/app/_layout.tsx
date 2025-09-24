@@ -12,35 +12,21 @@ export default function RootLayout() {
 
   useEffect(() => {
     async function setupPlayer() {
-      if(Platform.OS === "web"){
-        const baseUrl = "http://localhost:3000";
-        const res = await fetch(`${baseUrl}/api/songs`);
-        const songs = await res.json();
 
-        let tracks = songs.map((song: { url: string; title: any; }) => ({
-          url: baseUrl + song.url,
-          title: song.title
-        }))
+      const baseUrl = "http://localhost:3000"; // TO MODIFY
+      const res = await fetch(`${baseUrl}/api/songs`);
+      const songs = await res.json();
 
-        await TrackPlayer.add(tracks)
-      }   
-      else {
-        const track1 = {
-          url: require('../assets/test_music/St.Cliche - Spectral.mp3'), 
-          title: 'St.Cliche - Spectral',
-        }
+      let tracks = songs.map((song: { url: string; title: any; }) => ({
+        url: baseUrl + song.url,
+        title: song.title
+      }))
 
-        const track2 = {
-          url: require('../assets/test_music/Ivan B - Sweaters.mp3'), 
-          title: 'Ivan B - Sweaters',
-        }
+      await TrackPlayer.add(tracks)
 
-        const track3 = {
-          url: require('../assets/test_music/Blank.mp3'), 
-          title: 'Blank',
-        }
+      // Add specific local storage for android phone (Not sure how to do for other platforms)
+      if(Platform.OS === 'android'){
 
-        await TrackPlayer.add([track1,track2,track3])
       }
 
 
