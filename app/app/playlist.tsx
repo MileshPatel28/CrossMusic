@@ -1,10 +1,6 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
-import Collapsible from "react-native-collapsible";
 import Accordion from 'react-native-collapsible/Accordion';
-
-
-
 import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";

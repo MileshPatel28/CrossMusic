@@ -2,34 +2,19 @@ import { theme } from "@/components/theme";
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
-import { Platform } from "react-native";
 import TrackPlayer from 'react-native-track-player';
-
+import {syncTrackPlayer} from './lib'
 
 TrackPlayer.registerPlaybackService(() => require('./service.js'));
 
 export default function RootLayout() {
 
   useEffect(() => {
+    
+
     async function setupPlayer() {
-
-      const baseUrl = "http://localhost:3000"; // TO MODIFY
-      const res = await fetch(`${baseUrl}/api/songs`);
-      const songs = await res.json();
-
-      let tracks = songs.map((song: { url: string; title: any; }) => ({
-        url: baseUrl + song.url,
-        title: song.title
-      }))
-
-      await TrackPlayer.add(tracks)
-
-      // Add specific local storage for android phone (Not sure how to do for other platforms)
-      if(Platform.OS === 'android'){
-
-      }
-
-
+      await TrackPlayer.setupPlayer()
+      syncTrackPlayer();
     }
 
     setupPlayer();
