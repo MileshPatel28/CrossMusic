@@ -45,6 +45,13 @@ export default function RootLayout() {
     tabBarStyle: {backgroundColor: theme.colors.darkBackground, borderTopWidth: 0}
   }}>
     <Tabs.Screen
+      name="playlist"
+      options={{
+        title: "",
+        tabBarIcon: ({ color }) => <Feather size={28} name="list" color={color} />,
+      }}
+    />
+    <Tabs.Screen
       name="index"
       options={{
         title: "",
