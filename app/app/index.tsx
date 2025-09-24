@@ -16,7 +16,7 @@ function MusicVisualizer() {
       justifyContent: 'center',
       flex: 1
     }}>
-      <Feather size={100} name="music" color={theme.colors.darkBackground} />
+      <Feather size={250} name="music" color={theme.colors.darkBackground} />
     </ThemedView>
   )
 }
@@ -26,7 +26,7 @@ function VolumeSlider() {
   return (
     <ThemedView
       style={{
-        top: 35,
+        top: 50,
         flexDirection: 'row',
         justifyContent: "flex-start",
         alignItems: 'center',
@@ -138,7 +138,7 @@ const nextSong = async () => {
       <MusicVisualizer></MusicVisualizer>
 
       <ThemedView style={{
-        justifyContent: "flex-end"
+        justifyContent: "flex-end", 
       }}>
 
 
@@ -147,6 +147,7 @@ const nextSong = async () => {
             {
               flexDirection: 'column',
               alignItems: 'center',
+
             }
           ]}>
 
@@ -154,8 +155,8 @@ const nextSong = async () => {
 
 
 
-          <ThemedText style={{ zIndex: 2 }}> {activeTrack?.title} </ThemedText> 
-          
+          <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {activeTrack?.title} </ThemedText> 
+
           <VolumeSlider/>
 
           <ThemedView
@@ -167,15 +168,15 @@ const nextSong = async () => {
             ]}>
 
             <TouchableOpacity onPressIn={previousSong}>
-              <MaterialIcons id="playPauseIcon" name="skip-previous" size={24} color={theme.colors.text} />
+              <MaterialIcons id="playPauseIcon" name="skip-previous" size={48} color={theme.colors.text} />
             </TouchableOpacity>
 
             <TouchableOpacity onPressIn={togglePlayPause}>
-              <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={24} color={theme.colors.text} />
+              <MaterialIcons id="playPauseIcon" name={isPlaying ? "pause" : "play-arrow"} size={48} color={theme.colors.text} />
             </TouchableOpacity>
 
             <TouchableOpacity onPressIn={nextSong}>
-              <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
+              <MaterialIcons id="playPauseIcon" name="skip-next" size={48} color={theme.colors.text} />
             </TouchableOpacity>
           </ThemedView>
 
