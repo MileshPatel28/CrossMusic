@@ -27,7 +27,7 @@ function VolumeSlider() {
         maximumTrackTintColor={theme.colors.darkBackground}
         thumbTintColor={theme.colors.lightText}
         onSlidingComplete={async (value) => {
-          await TrackPlayer.seekTo(value); 
+          await TrackPlayer.setVolume(value/100)
         }}
       />
 
@@ -126,6 +126,13 @@ const nextSong = async () => {
           }
         ]}>
 
+
+
+
+
+
+
+
         <VolumeSlider/>
 
         <ThemedView
@@ -150,8 +157,17 @@ const nextSong = async () => {
         </ThemedView>
 
 
-        <MyPlayerBar></MyPlayerBar>
 
+
+
+
+
+
+
+
+
+
+        <MyPlayerBar></MyPlayerBar>
 
       </ThemedView>
 
