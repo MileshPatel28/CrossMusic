@@ -98,7 +98,7 @@ function MyPlayerBar() {
 }
 
 
-export default function Index() {
+export default function MusicPlayer() {
 
   const activeTrack = useActiveTrack();
   const [isPlaying, setIsPlaying] = useState(false);
