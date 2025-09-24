@@ -62,4 +62,5 @@ android/build/
 
 
 # Project Specific
-app/assets/test_music/*
+app/assets/test_music/
+backend/api/songs/*
