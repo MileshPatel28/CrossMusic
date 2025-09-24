@@ -7,9 +7,8 @@ import { theme } from "@/components/theme";
 import TrackPlayer from "react-native-track-player";
 import { TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
-
+import {uploadSong} from './lib'
 
 
 
@@ -25,20 +24,7 @@ export default function Playlists(){
         loadTracks();
     }, []);
 
-      async function uploadSong() {
-        const res = await DocumentPicker.getDocumentAsync({
-          type: "audio/mpeg", 
-          multiple: true
-        });
-    
-        if (res.canceled) return;
-    
-        for(const file of res.assets){
-          console.log(file);
-        }
-    
-    
-      }
+
     
 
     function createAllSongList() {
