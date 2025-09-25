@@ -4,11 +4,12 @@ import Accordion from 'react-native-collapsible/Accordion';
 import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";
-import TrackPlayer from "react-native-track-player";
+import TrackPlayer ,{ Event} from "react-native-track-player";
 import { TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
-import {uploadSong, deleteSong} from './lib'
+import {uploadSong, deleteSong, syncTrackPlayer} from './lib'
+
 
 
 
@@ -18,10 +19,17 @@ export default function Playlists(){
 
     useEffect(() => {
         async function loadTracks() {
+            syncTrackPlayer()
             setTracks(await TrackPlayer.getQueue())
         }
         
         loadTracks();
+
+        const sub = TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, loadTracks);
+
+        return () => {
+            sub.remove();
+        };
     }, []);
 
 

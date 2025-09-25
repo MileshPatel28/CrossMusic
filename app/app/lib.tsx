@@ -60,7 +60,7 @@ export async function uploadSong() {
 
 export async function deleteSong(songTitle:string){
   try {
-    await fetch(baseUrl + `/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
+    await fetch(baseUrl +`/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
   }catch(e) {
     console.log(e);
   }
