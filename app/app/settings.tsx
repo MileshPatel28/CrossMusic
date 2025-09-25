@@ -8,30 +8,45 @@ import { baseUrl } from "./lib";
 
 
 
-export async function saveSearchTerm(term:string) {
+function formatAddress(serverAddress:string){
+  if(!serverAddress.startsWith('http://')){
+    serverAddress = 'http://' + serverAddress;
+  }
+
+  if(!serverAddress.endsWith(':3000')){ //Modify this to allow dynamic ports
+    serverAddress = serverAddress + ':3000'
+  }
+
+  return serverAddress;
+}
+
+export async function saveSearchServerAddress(serverAddress:string) {
+
+  serverAddress = formatAddress(serverAddress);
+
   if (Platform.OS === "web") {
-    localStorage.setItem("serverSearchTerm", term);
+    localStorage.setItem("serverSearchserverAddress", serverAddress);
   } else {
-    await AsyncStorage.setItem('server_adresse', term);
+    await AsyncStorage.setItem('server_Addresse', serverAddress);
   }
 }
 
-export async function loadSearchTerm() {
+export async function loadSearchServerAddress() {
   if (Platform.OS === "web") {
-    return localStorage.getItem("serverSearchTerm") || baseUrl;
+    return localStorage.getItem("serverSearchserverAddress") || baseUrl;
   } else {
-    return await AsyncStorage.getItem('server_adresse') || baseUrl;
+    return await AsyncStorage.getItem('server_Addresse') || baseUrl;
   }
 }
 
 export default function Settings() {
-  const [serverSearchTerm, setServerSearchTerm] = useState("");
+  const [serverSearchserverAddress, setServerSearchserverAddress] = useState("");
   const [error, setError] = useState("");
 
 
   useEffect(() => {
     async function loadData(){
-      setServerSearchTerm(await loadSearchTerm())
+      setServerSearchserverAddress(await loadSearchServerAddress())
 
     }
 
@@ -45,13 +60,17 @@ export default function Settings() {
       <ThemedText> Settings </ThemedText>
 
       <ThemedView style={{ margin: 10 }}>
-        <ThemedText style={{ padding: 5, fontSize: 20}}> Server adresse: </ThemedText>
+        <ThemedText style={{ padding: 5, fontSize: 20}}> Server Addresse: </ThemedText>
         <TextInput
-          placeholder="Enter adresse..."
-          value={serverSearchTerm}
+          placeholder="Enter Addresse..."
+          value={serverSearchserverAddress}
           onChangeText={async (text) => {
-            saveSearchTerm(text);
-            setServerSearchTerm(text);
+            saveSearchServerAddress(text);
+            setServerSearchserverAddress(text);
+          }}
+          onSubmitEditing={(event) => {
+            let finalInput = event.nativeEvent.text;
+            setServerSearchserverAddress(formatAddress(finalInput))
           }}
           style={{
             marginBottom: 10,
