@@ -5,10 +5,10 @@ import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";
 import TrackPlayer ,{ Event} from "react-native-track-player";
-import { TouchableOpacity } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
-import {uploadSong, deleteSong, syncTrackPlayer} from './lib'
+import {uploadSong, deleteSong} from './lib'
 
 
 
@@ -16,6 +16,7 @@ import {uploadSong, deleteSong, syncTrackPlayer} from './lib'
 export default function Playlists(){
     const [activeSections, setActiveSections] = useState<number[]>([]);
     const [tracks, setTracks] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         async function loadTracks() {
@@ -35,6 +36,10 @@ export default function Playlists(){
     
 
     function createAllSongList() {
+        const filteredTracks = tracks.filter(track =>
+            track.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
         return (
             <ThemedView
                 style={{
@@ -42,8 +47,22 @@ export default function Playlists(){
                     padding: 10
                 }}
             >  
+                <TextInput
+                    placeholder="Search songs..."
+                    value={searchTerm}
+                    onChangeText={setSearchTerm}
+                    style={{
+                    marginBottom: 10,
+                    padding: 8,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderColor: theme.colors.outline,
+                    backgroundColor: theme.colors.background,
+                    color: theme.colors.text,
+                    }}
+                />
            
-                {tracks.map((track, index) => (
+                {filteredTracks.map((track, index) => (
                     <React.Fragment key={track.id ?? index}>
                         {singleSongTile(track)}
                     </React.Fragment>
