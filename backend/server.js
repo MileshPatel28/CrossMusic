@@ -1,11 +1,14 @@
 const express = require('express')
 const app = express()
 const port = 3000
-const fs = require("fs");
-const fsP = require("fs/promises");
-const path = require("path");
-const multer = require("multer");
+const cors = require('cors')
+const fs = require("fs")
+const fsP = require("fs/promises")
+const path = require("path")
+const multer = require("multer")
 
+
+app.use(cors())
 
 const songsDir = path.join(__dirname, "api/songs");
 

@@ -1,10 +1,17 @@
 import { Platform } from "react-native";
 import TrackPlayer from "react-native-track-player";
 import * as DocumentPicker from "expo-document-picker";
+import { loadSearchTerm } from "./settings";
 
-const baseUrl = "http://localhost:3000"; // TO MODIFY
+export let baseUrl = "http://localhost:3000"; // TO MODIFY
+
+
+
+
 
 export async function syncTrackPlayer() {
+
+  baseUrl = await loadSearchTerm()
 
   const res = await fetch(`${baseUrl}/api/songs`);
   const songs = await res.json();
@@ -25,6 +32,9 @@ export async function syncTrackPlayer() {
 
 
 export async function uploadSong() {
+
+  baseUrl = await loadSearchTerm()
+
   const res = await DocumentPicker.getDocumentAsync({
     type: "audio/mpeg",
     multiple: true
@@ -59,6 +69,9 @@ export async function uploadSong() {
 
 
 export async function deleteSong(songTitle:string){
+
+  baseUrl = await loadSearchTerm()
+
   try {
     await fetch(baseUrl +`/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
     await syncTrackPlayer();
