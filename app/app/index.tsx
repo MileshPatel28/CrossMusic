@@ -115,19 +115,23 @@ export default function MusicPlayer() {
       }
 
     }
-    try {
 
-      loadQueue();
+    loadQueue();
 
-      TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, async () => {
-        setQueueLength((await TrackPlayer.getQueue()).length)
-        setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
-      })
+    const subTrackChanged = TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, async () => {
+      setQueueLength((await TrackPlayer.getQueue()).length)
+      setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
+    })
 
-      TrackPlayer.addEventListener(Event.PlaybackState, async (state) => {
-        setIsPlaying(state.state === State.Playing);
-      });
-    } catch { }
+    const subPlaybackState = TrackPlayer.addEventListener(Event.PlaybackState, async (state) => {
+      setIsPlaying(state.state === State.Playing);
+    });
+
+    return () => {
+      subTrackChanged.remove();
+      subPlaybackState.remove();
+    }
+
   }, [])
 
   const togglePlayPause = async () => {
