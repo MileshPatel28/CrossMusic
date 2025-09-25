@@ -2,23 +2,27 @@ import { Platform } from "react-native";
 import TrackPlayer from "react-native-track-player";
 import * as DocumentPicker from "expo-document-picker";
 import { loadSearchServerAddress } from "./settings";
+import { Directory, File, Paths } from 'expo-file-system';
+
 
 export let baseUrl = "http://localhost:3000"; // TO MODIFY
 
-
-
+const SONGS_DIR = new Directory(Paths.document, "songs");
 
 
 export async function syncTrackPlayer() {
 
   baseUrl = await loadSearchServerAddress()
+
+  let tracks;
+
   try {
   
   const res = await fetch(`${baseUrl}/api/songs`);
   const songs = await res.json();
 
  
-    let tracks = songs.map((song: { url: string; title: any; }) => ({
+    tracks = songs.map((song: { url: string; title: any; }) => ({
       url: baseUrl + song.url,
       title: song.title
     }))
@@ -29,8 +33,26 @@ export async function syncTrackPlayer() {
     console.log("(CrossMusic Error) " + e);
     console.log("Maybe the serve adresse is incorrect?")
   }
+
+  
   // Add specific local storage for android phone (Not sure how to do for other platforms)
   if (Platform.OS === 'android') {
+    if(!SONGS_DIR.exists){
+      SONGS_DIR.create();
+    }
+
+    let songFilesAndroid = SONGS_DIR.list();
+
+    if(tracks != null && tracks.length > songFilesAndroid.length){
+
+    }
+    else if(tracks != null && tracks.length <= songFilesAndroid.length){
+      
+    }
+    else {
+
+    }
+
 
   }
 }
