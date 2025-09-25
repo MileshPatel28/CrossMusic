@@ -8,7 +8,7 @@ import TrackPlayer from "react-native-track-player";
 import { TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
-import {uploadSong} from './lib'
+import {uploadSong, deleteSong} from './lib'
 
 
 
@@ -83,6 +83,10 @@ export default function Playlists(){
                 > {singleTrack.title} </ThemedText>
                 <TouchableOpacity onPress={skipToSong}>
                     <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{marginLeft:'auto'}} onPress={() => deleteSong(singleTrack.title)}>
+                    <MaterialIcons name="delete" size={24} color={theme.colors.text} />
                 </TouchableOpacity>
             </ThemedView>
         )

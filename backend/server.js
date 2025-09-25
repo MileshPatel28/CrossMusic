@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 const fs = require("fs");
+const fsP = require("fs/promises");
 const path = require("path");
 const multer = require("multer");
 
@@ -59,4 +60,19 @@ app.get('/api/songs', (req,res) => {
 app.post('/api/upload',upload.array("songs"), (req,res) => {
   const uploadedFiles = req.files.map((file) => file.filename);
   res.json({sucess: true, files: uploadedFiles})
+})
+
+app.delete("/delete/:songName", async (req,res) => {
+  try {
+    const { songName } = req.params;
+
+    console.log(songName);
+
+    const safeName = path.basename(songName);
+    const filePath = path.join(songsDir, safeName + ".mp3");
+
+    fs.unlink(filePath);
+  }catch(e){
+    console.log(e);
+  }
 })

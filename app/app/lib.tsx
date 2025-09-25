@@ -56,3 +56,12 @@ export async function uploadSong() {
 
   syncTrackPlayer();
 }
+
+
+export async function deleteSong(songTitle:string){
+  try {
+    await fetch(baseUrl + `/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
+  }catch(e) {
+    console.log(e);
+  }
+}
