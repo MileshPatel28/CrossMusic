@@ -71,7 +71,12 @@ app.delete("/delete/:songName", async (req,res) => {
     const safeName = path.basename(songName);
     const filePath = path.join(songsDir, safeName + ".mp3");
 
-    fs.unlink(filePath);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to delete file" });
+      }
+      res.json({ success: true });
+    });
   }catch(e){
     console.log(e);
   }

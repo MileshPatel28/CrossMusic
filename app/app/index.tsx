@@ -139,10 +139,8 @@ export default function MusicPlayer() {
 
     if (playbackState.state === State.Playing) {
       await TrackPlayer.pause();
-      setIsPlaying(false);
     } else {
       await TrackPlayer.play();
-      setIsPlaying(true);
     }
   };
 

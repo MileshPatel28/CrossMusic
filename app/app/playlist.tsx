@@ -19,7 +19,6 @@ export default function Playlists(){
 
     useEffect(() => {
         async function loadTracks() {
-            syncTrackPlayer()
             setTracks(await TrackPlayer.getQueue())
         }
         
