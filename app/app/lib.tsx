@@ -12,18 +12,23 @@ export let baseUrl = "http://localhost:3000"; // TO MODIFY
 export async function syncTrackPlayer() {
 
   baseUrl = await loadSearchTerm()
-
+  try {
+  
   const res = await fetch(`${baseUrl}/api/songs`);
   const songs = await res.json();
 
-  let tracks = songs.map((song: { url: string; title: any; }) => ({
-    url: baseUrl + song.url,
-    title: song.title
-  }))
+ 
+    let tracks = songs.map((song: { url: string; title: any; }) => ({
+      url: baseUrl + song.url,
+      title: song.title
+    }))
 
-  await TrackPlayer.reset();
-  await TrackPlayer.add(tracks)
-
+    await TrackPlayer.reset();
+    await TrackPlayer.add(tracks)
+  }catch(e){
+    console.log("(CrossMusic Error) " + e);
+    console.log("Maybe the serve adresse is incorrect?")
+  }
   // Add specific local storage for android phone (Not sure how to do for other platforms)
   if (Platform.OS === 'android') {
 

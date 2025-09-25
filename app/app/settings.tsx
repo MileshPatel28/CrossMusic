@@ -39,22 +39,6 @@ export default function Settings() {
 
   }, [])
 
-  function isValidAddress(text:string) {
-    if (text === "localhost") return true;
-    // Simple IPv4 regex
-    return /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(text);
-  }
-
-  function formatAddress(text:string) {
-    let address = text.trim();
-    if (!address.startsWith("http://")) {
-      address = "http://" + address;
-    }
-
-    address = address.replace(/:[0-9]+$/, "");
-    address += ":3000";
-    return address;
-  }
 
   return (
     <ThemedView style={styles.container}>
@@ -66,16 +50,8 @@ export default function Settings() {
           placeholder="Enter adresse..."
           value={serverSearchTerm}
           onChangeText={async (text) => {
-            let raw = text.trim();
-            if (isValidAddress(raw)) {
-              setError("");
-              const formatted = formatAddress(raw);
-              setServerSearchTerm(formatted);
-              await saveSearchTerm(formatted);
-            } else {
-              setServerSearchTerm(text);
-              setError("Must be 'localhost' or a valid IP address");
-            }
+            saveSearchTerm(text);
+            setServerSearchTerm(text);
           }}
           style={{
             marginBottom: 10,
