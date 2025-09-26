@@ -88,7 +88,6 @@ export default function Playlists(){
         async function skipToSong() {
             const queue = await TrackPlayer.getQueue();
 
-            console.log(queue);
 
             const index = queue.findIndex((t) => {
                 return t.url === singleTrack.url
@@ -97,6 +96,8 @@ export default function Playlists(){
 
 
             if(index !== -1) {
+                console.log(queue[index])
+
                 await TrackPlayer.skip(index);
                 await TrackPlayer.play()
                 router.push('/')

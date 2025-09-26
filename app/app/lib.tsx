@@ -67,6 +67,8 @@ export async function syncTrackPlayer() {
 
       await TrackPlayer.reset();
       await TrackPlayer.add(tracks)
+
+      console.log("SERVER CONNECTED")
   }catch(e){  
     console.log("(CrossMusic Error) " + e);
     console.log("Maybe the serve adresse is incorrect?")
@@ -132,10 +134,13 @@ export async function uploadSong() {
   const formData = new FormData();
 
   for (const file of res.assets) {
+
     if (file.file && Platform.OS === 'web') {
       formData.append("songs", file.file);
     }
-    else if(Platform.OS === 'android') {
+    else if(file && Platform.OS === 'android') {
+
+      console.log(file.name);
 
       formData.append("songs", {
           uri: file.uri,
@@ -143,15 +148,20 @@ export async function uploadSong() {
           name: file.name,
         } as any);
     }
-  }
 
     await fetch(baseUrl + "/api/upload", {
       method: "POST",
       body: formData,
     })
+    
+
+  }
+
 
 
   syncTrackPlayer();
+
+
 }
 
 
