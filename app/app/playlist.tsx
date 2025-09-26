@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";
 import TrackPlayer ,{ Event} from "react-native-track-player";
-import { TextInput, TouchableOpacity } from "react-native";
+import { TextInput, TouchableOpacity,ScrollView, FlatList, Dimensions } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import {uploadSong, deleteSong} from './lib'
@@ -32,7 +32,6 @@ export default function Playlists(){
         };
     }, []);
 
-
     
 
     function createAllSongList() {
@@ -44,7 +43,8 @@ export default function Playlists(){
             <ThemedView
                 style={{
                     marginVertical: 10,
-                    padding: 10
+                    padding: 10,
+                    flex: 1
                 }}
             >  
                 <TextInput
@@ -62,11 +62,22 @@ export default function Playlists(){
                     }}
                 />
            
-                {filteredTracks.map((track, index) => (
-                    <React.Fragment key={track.id ?? index}>
-                        {singleSongTile(track)}
-                    </React.Fragment>
-                ))}
+                <FlatList
+                    data={filteredTracks}
+                    keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
+                    renderItem={({ item }) => singleSongTile(item)}
+                    style={{ maxHeight: Dimensions.get('window').height - 220 }}
+                    showsVerticalScrollIndicator={false}
+                />    
+
+                {/* <ScrollView>
+                    {filteredTracks.map((track, index) => (
+                        <React.Fragment key={track.id ?? index}>
+                            {singleSongTile(track)}
+                        </React.Fragment>
+                    ))}
+                </ScrollView> */}
+
             </ThemedView>
         );
     }

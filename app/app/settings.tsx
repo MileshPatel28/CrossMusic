@@ -6,6 +6,7 @@ import { Platform, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseUrl, syncTrackPlayer } from "./lib";
 import Feather from "@expo/vector-icons/Feather";
+import { Directory, Paths } from "expo-file-system";
 
 
 
@@ -93,6 +94,16 @@ export default function Settings() {
       }}>
         <Feather name="refresh-ccw" size={24} color={theme.colors.lightText} />
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => {
+        if(Platform.OS === 'android'){
+          let SONGS_DIR = new Directory(Paths.document, "songs");
+          SONGS_DIR.delete();
+        }
+        console.log("WIPING LOCAL DATA")
+      }}>
+        <Feather name="alert-octagon" size={24} color={theme.colors.lightText} />
+      </TouchableOpacity>
+
     </ThemedView>
   );
 }

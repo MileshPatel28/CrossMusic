@@ -11,9 +11,9 @@ export let baseUrl = "http://localhost:3000"; // TO MODIFY
 
 
 
-async function loadSongsLocally(){
+async function loadSongsLocally(SONGS_DIR:Directory){
   if(Platform.OS === 'android'){
-    const SONGS_DIR = new Directory(Paths.document, "songs");
+    // const SONGS_DIR = new Directory(Paths.document, "songs");
 
     if(!SONGS_DIR.exists){
       SONGS_DIR.create();
@@ -42,7 +42,12 @@ async function loadSongsLocally(){
 
 export async function syncTrackPlayer() {
 
-  loadSongsLocally();
+  let SONGS_DIR;
+
+  if(Platform.OS === 'android'){
+    SONGS_DIR = new Directory(Paths.document, "songs");
+    loadSongsLocally(SONGS_DIR);
+  }
 
 
 
@@ -75,13 +80,13 @@ export async function syncTrackPlayer() {
     
   // Add specific local storage for android phone (Not sure how to do for other platforms)
   if (Platform.OS === 'android') {
-    const SONGS_DIR = new Directory(Paths.document, "songs");
+    if(SONGS_DIR === undefined) SONGS_DIR = new Directory(Paths.document, "songs");
 
     let songFilesAndroid = SONGS_DIR.list();
 
 
 
-    if (tracks != null && tracks.length > songFilesAndroid.length) {
+    if (tracks != null && tracks.length >= songFilesAndroid.length) {
       if(!SONGS_DIR.exists) await SONGS_DIR.create(); 
 
       for (const track of tracks) {
@@ -99,9 +104,7 @@ export async function syncTrackPlayer() {
     }
     else if(tracks != null && tracks.length < songFilesAndroid.length){
 
-      console.log("ANDROID LSIT LONGER")
 
-      console.log(tracks)
 
       for(const file of songFilesAndroid) {
         if(!tracks.some(track => track.title === file.name.replace(".mp3", ""))){
@@ -142,6 +145,7 @@ export async function uploadSong() {
   });
 
   if (res.canceled) return;
+  
 
   const formData = new FormData();
 
@@ -150,7 +154,9 @@ export async function uploadSong() {
       formData.append("songs", file.file);
     }
     else if(Platform.OS === 'android') {
-      console.log(file.uri)
+
+      const SONGS_DIR = new Directory(Paths.document, "songs");
+
 
       formData.append("songs", {
           uri: file.uri,
@@ -160,12 +166,10 @@ export async function uploadSong() {
     }
   }
 
-
-  await fetch(baseUrl + "/api/upload", {
-    method: "POST",
-    body: formData,
-   // headers: Platform.OS !== "web" ? { "Content-Type": "multipart/form-data" } : {},
-  })
+    await fetch(baseUrl + "/api/upload", {
+      method: "POST",
+      body: formData,
+    })
 
 
   syncTrackPlayer();
@@ -177,7 +181,13 @@ export async function deleteSong(songTitle:string){
   baseUrl = await loadSearchServerAddress()
 
   try {
+    const SONGS_DIR = new Directory(Paths.document, "songs");
+    const localFile = new File(SONGS_DIR, songTitle + '.mp3');
+
+
+    localFile.delete();
     await fetch(baseUrl +`/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
+
     await syncTrackPlayer();
   }catch(e) {
     console.log(e);
