@@ -87,9 +87,14 @@ export default function Playlists(){
 
         async function skipToSong() {
             const queue = await TrackPlayer.getQueue();
+
+            console.log(queue);
+
             const index = queue.findIndex((t) => {
                 return t.url === singleTrack.url
             });
+
+
 
             if(index !== -1) {
                 await TrackPlayer.skip(index);
@@ -118,7 +123,11 @@ export default function Playlists(){
                         fontSize: 20,
                     }}
                 > {singleTrack.title} </ThemedText>
-                <TouchableOpacity onPress={skipToSong}>
+                <TouchableOpacity onPress={() => {
+                    console.log("SKIPPING TOO")
+
+                    skipToSong()
+                }}>
                     <MaterialIcons id="playPauseIcon" name="skip-next" size={24} color={theme.colors.text} />
                 </TouchableOpacity>
 

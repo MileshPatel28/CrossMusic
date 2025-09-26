@@ -25,10 +25,11 @@ async function loadSongsLocally(SONGS_DIR:Directory){
     for(const file of songFilesAndroid) {
       if(file.name.endsWith('.mp3')){
         const uri = file.uri;
+        const title = decodeURIComponent(file.name.replace(".mp3", ""));
 
         tracks.push({
           url: uri,
-          title: file.name.replace(".mp3","")
+          title: title
         })
       }
     }
@@ -58,8 +59,10 @@ export async function syncTrackPlayer() {
 
   
       tracks = songs.map((song: { url: string; title: any; }) => ({
+        
+
         url: baseUrl + song.url,
-        title: song.title
+        title: decodeURIComponent(song.title)
       }))
 
       await TrackPlayer.reset();
@@ -137,7 +140,7 @@ export async function uploadSong() {
       formData.append("songs", {
           uri: file.uri,
           type: "audio/mpeg",
-          name: file.name || "upload.mp3",
+          name: file.name,
         } as any);
     }
   }
