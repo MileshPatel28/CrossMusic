@@ -2,9 +2,10 @@ import { theme } from "@/components/theme";
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet, TextInput } from "react-native";
+import { Platform, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { baseUrl } from "./lib";
+import { baseUrl, syncTrackPlayer } from "./lib";
+import Feather from "@expo/vector-icons/Feather";
 
 
 
@@ -86,6 +87,12 @@ export default function Settings() {
           <ThemedText style={{ color: 'red', marginTop: 4 }}>{error}</ThemedText>
         ) : null}
       </ThemedView>
+      <TouchableOpacity onPress={() => {
+        syncTrackPlayer()
+        console.log("REFRESHING")
+      }}>
+        <Feather name="refresh-ccw" size={24} color={theme.colors.lightText} />
+      </TouchableOpacity>
     </ThemedView>
   );
 }

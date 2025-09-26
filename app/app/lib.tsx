@@ -7,10 +7,46 @@ import { Directory, File, Paths } from 'expo-file-system';
 
 export let baseUrl = "http://localhost:3000"; // TO MODIFY
 
-const SONGS_DIR = new Directory(Paths.document, "songs");
 
+
+
+
+async function loadSongsLocally(){
+  if(Platform.OS === 'android'){
+    const SONGS_DIR = new Directory(Paths.document, "songs");
+
+    if(!SONGS_DIR.exists){
+      SONGS_DIR.create();
+    }
+
+    let songFilesAndroid = SONGS_DIR.list();
+
+    let tracks = []
+
+    for(const file of songFilesAndroid) {
+      if(file.name.endsWith('.mp3')){
+        const uri = file.uri;
+
+        tracks.push({
+          url: uri,
+          title: file.name.replace(".mp3","")
+        })
+      }
+    }
+
+
+    await TrackPlayer.reset();
+    await TrackPlayer.add(tracks)   
+  }
+}
 
 export async function syncTrackPlayer() {
+
+  loadSongsLocally();
+
+
+
+
 
   baseUrl = await loadSearchServerAddress()
 
@@ -29,29 +65,67 @@ export async function syncTrackPlayer() {
 
     await TrackPlayer.reset();
     await TrackPlayer.add(tracks)
-  }catch(e){
+  }catch(e){  
     console.log("(CrossMusic Error) " + e);
     console.log("Maybe the serve adresse is incorrect?")
+
+
   }
 
-  
+    
   // Add specific local storage for android phone (Not sure how to do for other platforms)
   if (Platform.OS === 'android') {
-    if(!SONGS_DIR.exists){
-      SONGS_DIR.create();
-    }
+    const SONGS_DIR = new Directory(Paths.document, "songs");
 
     let songFilesAndroid = SONGS_DIR.list();
 
-    if(tracks != null && tracks.length > songFilesAndroid.length){
+
+
+    if (tracks != null && tracks.length > songFilesAndroid.length) {
+      if(!SONGS_DIR.exists) await SONGS_DIR.create(); 
+
+      for (const track of tracks) {
+        const fileName = track.title.endsWith(".mp3")
+          ? track.title
+          : `${track.title}.mp3`;
+
+        const localFile = new File(SONGS_DIR, fileName);
+
+        if (!localFile.exists) {
+          const safeUrl = encodeURI(track.url);
+          await File.downloadFileAsync(safeUrl, localFile);
+        }
+      }
+    }
+    else if(tracks != null && tracks.length < songFilesAndroid.length){
+
+      console.log("ANDROID LSIT LONGER")
+
+      console.log(tracks)
+
+      for(const file of songFilesAndroid) {
+        if(!tracks.some(track => track.title === file.name.replace(".mp3", ""))){
+          const formData = new FormData();
+
+          formData.append("songs", {
+            uri: file.uri,
+            type: "audio/mpeg",
+            name: file.name || "upload.mp3",
+          } as any);
+
+          await fetch(baseUrl + "/api/upload", {
+            method: "POST",
+            body: formData,
+            headers:  { "Content-Type": "multipart/form-data" } ,
+          })
+        }
+      }
 
     }
-    else if(tracks != null && tracks.length <= songFilesAndroid.length){
-      
-    }
-    else {
 
-    }
+
+  
+    
 
 
   }
@@ -76,6 +150,8 @@ export async function uploadSong() {
       formData.append("songs", file.file);
     }
     else if(Platform.OS === 'android') {
+      console.log(file.uri)
+
       formData.append("songs", {
           uri: file.uri,
           type: "audio/mpeg",
@@ -84,10 +160,11 @@ export async function uploadSong() {
     }
   }
 
+
   await fetch(baseUrl + "/api/upload", {
     method: "POST",
     body: formData,
-    headers: Platform.OS !== "web" ? { "Content-Type": "multipart/form-data" } : {},
+   // headers: Platform.OS !== "web" ? { "Content-Type": "multipart/form-data" } : {},
   })
 
 
