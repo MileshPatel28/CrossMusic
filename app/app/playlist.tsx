@@ -37,7 +37,7 @@ export default function Playlists(){
     function createAllSongList() {
         const filteredTracks = tracks.filter(track =>
             track.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        ).sort((a, b) => a.title.localeCompare(b.title));
 
         return (
             <ThemedView
@@ -70,13 +70,7 @@ export default function Playlists(){
                     showsVerticalScrollIndicator={false}
                 />    
 
-                {/* <ScrollView>
-                    {filteredTracks.map((track, index) => (
-                        <React.Fragment key={track.id ?? index}>
-                            {singleSongTile(track)}
-                        </React.Fragment>
-                    ))}
-                </ScrollView> */}
+
 
             </ThemedView>
         );
