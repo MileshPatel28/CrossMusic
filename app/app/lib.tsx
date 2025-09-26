@@ -13,7 +13,6 @@ export let baseUrl = "http://localhost:3000"; // TO MODIFY
 
 async function loadSongsLocally(SONGS_DIR:Directory){
   if(Platform.OS === 'android'){
-    // const SONGS_DIR = new Directory(Paths.document, "songs");
 
     if(!SONGS_DIR.exists){
       SONGS_DIR.create();
@@ -49,71 +48,55 @@ export async function syncTrackPlayer() {
     loadSongsLocally(SONGS_DIR);
   }
 
-
-
-
-
   baseUrl = await loadSearchServerAddress()
 
   let tracks;
 
   try {
+    const res = await fetch(`${baseUrl}/api/songs`);
+    const songs = await res.json();
+
   
-  const res = await fetch(`${baseUrl}/api/songs`);
-  const songs = await res.json();
+      tracks = songs.map((song: { url: string; title: any; }) => ({
+        url: baseUrl + song.url,
+        title: song.title
+      }))
 
- 
-    tracks = songs.map((song: { url: string; title: any; }) => ({
-      url: baseUrl + song.url,
-      title: song.title
-    }))
-
-    await TrackPlayer.reset();
-    await TrackPlayer.add(tracks)
+      await TrackPlayer.reset();
+      await TrackPlayer.add(tracks)
   }catch(e){  
     console.log("(CrossMusic Error) " + e);
     console.log("Maybe the serve adresse is incorrect?")
-
-
   }
 
-    
-  // Add specific local storage for android phone (Not sure how to do for other platforms)
+
   if (Platform.OS === 'android') {
     if(SONGS_DIR === undefined) SONGS_DIR = new Directory(Paths.document, "songs");
-
     let songFilesAndroid = SONGS_DIR.list();
-
-
 
     if (tracks != null && tracks.length >= songFilesAndroid.length) {
       if(!SONGS_DIR.exists) await SONGS_DIR.create(); 
 
       for (const track of tracks) {
-        const fileName = track.title.endsWith(".mp3")
-          ? track.title
-          : `${track.title}.mp3`;
+        const fileName = track.title.endsWith(".mp3") ? track.title : track.title + '.mp3';
 
         const localFile = new File(SONGS_DIR, fileName);
 
         if (!localFile.exists) {
-          const safeUrl = encodeURI(track.url);
-          await File.downloadFileAsync(safeUrl, localFile);
+          await File.downloadFileAsync(encodeURI(track.url), localFile);
         }
       }
     }
     else if(tracks != null && tracks.length < songFilesAndroid.length){
 
-
-
       for(const file of songFilesAndroid) {
-        if(!tracks.some(track => track.title === file.name.replace(".mp3", ""))){
+        if(!tracks.some((track: { title: string; }) => track.title === file.name.replace(".mp3", ""))){
           const formData = new FormData();
 
           formData.append("songs", {
             uri: file.uri,
             type: "audio/mpeg",
-            name: file.name || "upload.mp3",
+            name: file.name,
           } as any);
 
           await fetch(baseUrl + "/api/upload", {
@@ -121,15 +104,11 @@ export async function syncTrackPlayer() {
             body: formData,
             headers:  { "Content-Type": "multipart/form-data" } ,
           })
+
         }
       }
 
     }
-
-
-  
-    
-
 
   }
 }
@@ -154,9 +133,6 @@ export async function uploadSong() {
       formData.append("songs", file.file);
     }
     else if(Platform.OS === 'android') {
-
-      const SONGS_DIR = new Directory(Paths.document, "songs");
-
 
       formData.append("songs", {
           uri: file.uri,
@@ -185,7 +161,7 @@ export async function deleteSong(songTitle:string){
     const localFile = new File(SONGS_DIR, songTitle + '.mp3');
 
 
-    localFile.delete();
+    localFile.delete(); // Delete necessary or else sync re adds it
     await fetch(baseUrl +`/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
 
     await syncTrackPlayer();
