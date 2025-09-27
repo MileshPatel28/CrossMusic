@@ -121,11 +121,14 @@ export async function syncTrackPlayer() {
 
 export async function uploadSong() {
 
+  let SONGS_DIR;
+
   baseUrl = await loadSearchServerAddress()
 
   const res = await DocumentPicker.getDocumentAsync({
     type: "audio/mpeg",
-    multiple: true
+    multiple: true,
+    copyToCacheDirectory: true
   });
 
   if (res.canceled) return;
@@ -133,14 +136,22 @@ export async function uploadSong() {
 
   const formData = new FormData();
 
+
   for (const file of res.assets) {
 
     if (file.file && Platform.OS === 'web') {
       formData.append("songs", file.file);
     }
     else if(file && Platform.OS === 'android') {
+      SONGS_DIR = new Directory(Paths.document, "songs");
 
-      console.log(file.name);
+
+      const destFile = new File(file);
+      destFile.rename(file.name)
+      destFile.copy(SONGS_DIR)
+      destFile.delete();
+
+      
 
       formData.append("songs", {
           uri: file.uri,
@@ -148,15 +159,25 @@ export async function uploadSong() {
           name: file.name,
         } as any);
     }
-
-    await fetch(baseUrl + "/api/upload", {
-      method: "POST",
-      body: formData,
-    })
     
 
   }
+  
+  if(Platform.OS === 'android'){
+    if(SONGS_DIR === undefined) SONGS_DIR = new Directory(Paths.document, "songs");
 
+    const CACHE_DIR = new Directory(Paths.cache,"DocumentPicker");
+    for(const file of CACHE_DIR.list()){
+      file.delete();
+    }
+    
+    loadSongsLocally(SONGS_DIR)
+  }
+
+  await fetch(baseUrl + "/api/upload", {
+    method: "POST",
+    body: formData,
+  })
 
 
   syncTrackPlayer();
@@ -167,16 +188,22 @@ export async function uploadSong() {
 
 export async function deleteSong(songTitle:string){
 
+  let SONGS_DIR;
+
   baseUrl = await loadSearchServerAddress()
 
   try {
-    const SONGS_DIR = new Directory(Paths.document, "songs");
-    const localFile = new File(SONGS_DIR, songTitle + '.mp3');
 
+    if(Platform.OS === 'android'){
+      if(SONGS_DIR === undefined) SONGS_DIR = new Directory(Paths.document, "songs");
+      const localFile = new File(SONGS_DIR, songTitle + '.mp3');
 
-    localFile.delete(); // Delete necessary or else sync re adds it
+      localFile.delete(); // Delete necessary or else sync re adds it
+
+      loadSongsLocally(SONGS_DIR)
+    }
+
     await fetch(baseUrl +`/delete/${encodeURIComponent(songTitle)}`, { method: "DELETE" });
-
     await syncTrackPlayer();
   }catch(e) {
     console.log(e);

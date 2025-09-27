@@ -66,7 +66,7 @@ export default function Playlists(){
                     data={filteredTracks}
                     keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
                     renderItem={({ item }) => singleSongTile(item)}
-                    style={{ maxHeight: Dimensions.get('window').height - 220 }}
+                    style={{ maxHeight: Dimensions.get('window').height - 100 }}
                     showsVerticalScrollIndicator={false}
                 />    
 
