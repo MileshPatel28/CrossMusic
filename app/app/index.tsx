@@ -1,8 +1,8 @@
 import { ThemedText } from "@/components/themed/themed-text";
 import { ThemedView } from "@/components/themed/themed-view";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import TrackPlayer, { Event,State, useActiveTrack, useProgress } from "react-native-track-player";
-import {  useEffect, useState } from "react";
+import TrackPlayer, { Event, State, useActiveTrack, useProgress } from "react-native-track-player";
+import { useEffect, useState } from "react";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from "@react-native-community/slider";
 import { theme } from "@/components/theme";
@@ -30,24 +30,24 @@ function VolumeSlider() {
         justifyContent: "flex-start",
         alignItems: 'center',
         width: '100%',
-        marginTop: 8, 
+        marginTop: 8,
       }}>
-        <MaterialIcons name="volume-up" size={24} color={theme.colors.text} />
-        <Slider
+      <MaterialIcons name="volume-up" size={24} color={theme.colors.text} />
+      <Slider
         style={{ flex: 0.25, height: 40, marginHorizontal: 16 }}
         minimumValue={0}
         maximumValue={100}
         value={50}
-        minimumTrackTintColor={theme.colors.text}  
+        minimumTrackTintColor={theme.colors.text}
         maximumTrackTintColor={theme.colors.darkBackground}
         thumbTintColor={theme.colors.lightText}
         onSlidingComplete={async (value) => {
-          await TrackPlayer.setVolume(value/100)
+          await TrackPlayer.setVolume(value / 100)
         }}
       />
 
     </ThemedView>
-    
+
   );
 }
 
@@ -68,15 +68,15 @@ function MyPlayerBar() {
 
   return (
     <ThemedView
-        style={[
-          styles.container,
-          {
-            flexDirection: 'row',
-            width: '100%',
-            padding: 16,
-            alignItems: "center",
-          }
-        ]}>
+      style={[
+        styles.container,
+        {
+          flexDirection: 'row',
+          width: '100%',
+          padding: 16,
+          alignItems: "center",
+        }
+      ]}>
 
       <ThemedText>{formatTime(progress.position)}</ThemedText>
       <Slider
@@ -84,11 +84,11 @@ function MyPlayerBar() {
         minimumValue={0}
         maximumValue={progress.duration || 0}
         value={progress.position}
-        minimumTrackTintColor={theme.colors.text}  
+        minimumTrackTintColor={theme.colors.text}
         maximumTrackTintColor={theme.colors.darkBackground}
         thumbTintColor={theme.colors.lightText}
         onSlidingComplete={async (value) => {
-          await TrackPlayer.seekTo(value); 
+          await TrackPlayer.seekTo(value);
         }}
       />
       <ThemedText>{formatTime(progress.duration)}</ThemedText>
@@ -107,38 +107,47 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     async function loadQueue() {
-      setQueueLength((await TrackPlayer.getQueue()).length)
-      setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
-    }
+      const playbackState = (await TrackPlayer.getPlaybackState()).state;
 
-    
-    // Try Catch because of Expo routing
-    try {
-      loadQueue();
-
-      TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, async () => {
+      if(playbackState !== State.None){
         setQueueLength((await TrackPlayer.getQueue()).length)
         setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
-      })
-    }catch{}
-  })
+      }
+
+    }
+
+    loadQueue();
+
+    const subTrackChanged = TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, async () => {
+      setQueueLength((await TrackPlayer.getQueue()).length)
+      setCurrentIndex((await TrackPlayer.getActiveTrackIndex() ?? 0) + 1)
+    })
+
+    const subPlaybackState = TrackPlayer.addEventListener(Event.PlaybackState, async (state) => {
+      setIsPlaying(state.state === State.Playing);
+    });
+
+    return () => {
+      subTrackChanged.remove();
+      subPlaybackState.remove();
+    }
+
+  }, [])
 
   const togglePlayPause = async () => {
     const playbackState = await TrackPlayer.getPlaybackState();
 
     if (playbackState.state === State.Playing) {
       await TrackPlayer.pause();
-      setIsPlaying(false);
     } else {
       await TrackPlayer.play();
-      setIsPlaying(true);
     }
   };
 
   const previousSong = async () => {
     try {
       await TrackPlayer.skipToPrevious();
-    } catch  {
+    } catch {
       await TrackPlayer.skip((await TrackPlayer.getQueue()).length - 1)
     }
   };
@@ -146,7 +155,7 @@ export default function MusicPlayer() {
   const nextSong = async () => {
     try {
       await TrackPlayer.skipToNext();
-    } catch  {
+    } catch {
       await TrackPlayer.skip(0)
     }
   };
@@ -162,7 +171,7 @@ export default function MusicPlayer() {
       <MusicVisualizer></MusicVisualizer>
 
       <ThemedView style={{
-        justifyContent: "flex-end", 
+        justifyContent: "flex-end",
       }}>
 
 
@@ -179,10 +188,10 @@ export default function MusicPlayer() {
 
 
 
-          <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {(activeTrack != null) ? activeTrack.title : "<No Songs>"} </ThemedText> 
+          <ThemedText style={{ zIndex: 2, fontSize: 28 }}> {(activeTrack != null) ? activeTrack.title : "<No Songs>"} </ThemedText>
 
-          <ThemedView 
-            style={{ 
+          <ThemedView
+            style={{
               top: 50,
               flexDirection: 'row',
               justifyContent: "flex-end",
@@ -190,10 +199,10 @@ export default function MusicPlayer() {
               width: '100%',
               marginEnd: 50,
             }}>
-            <ThemedText style={{fontSize: 24}}> {currentIndex} / {queueLength} </ThemedText>
+            <ThemedText style={{ fontSize: 24 }}> {currentIndex} / {queueLength} </ThemedText>
           </ThemedView>
-          
-          <VolumeSlider/>
+
+          <VolumeSlider />
 
           <ThemedView
             style={[

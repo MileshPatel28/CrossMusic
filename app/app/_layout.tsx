@@ -2,35 +2,55 @@ import { theme } from "@/components/theme";
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
-import { Platform } from "react-native";
-import TrackPlayer from 'react-native-track-player';
-
+import TrackPlayer, { Capability } from 'react-native-track-player';
+import {syncTrackPlayer} from './lib'
+import * as Notifications from 'expo-notifications';
 
 TrackPlayer.registerPlaybackService(() => require('./service.js'));
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 export default function RootLayout() {
 
   useEffect(() => {
-    async function setupPlayer() {
 
-      const baseUrl = "http://localhost:3000"; // TO MODIFY
-      const res = await fetch(`${baseUrl}/api/songs`);
-      const songs = await res.json();
-
-      let tracks = songs.map((song: { url: string; title: any; }) => ({
-        url: baseUrl + song.url,
-        title: song.title
-      }))
-
-      await TrackPlayer.add(tracks)
-
-      // Add specific local storage for android phone (Not sure how to do for other platforms)
-      if(Platform.OS === 'android'){
-
-      }
-
-
+    function rgbToInt(rgb: string) {
+      const result = rgb.match(/\d+/g); 
+      if (!result) return 0; 
+      const [r, g, b] = result.map(Number);
+      return (255 << 24) | (r << 16) | (g << 8) | b; 
     }
+
+    
+    async function setupPlayer() {
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        notificationCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+        color: rgbToInt(theme.colors.background)
+      })
+      syncTrackPlayer();
+    }
+
+
 
     setupPlayer();
     
