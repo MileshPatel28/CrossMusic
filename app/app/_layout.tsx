@@ -4,18 +4,28 @@ import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import TrackPlayer, { Capability } from 'react-native-track-player';
 import {syncTrackPlayer} from './lib'
+import * as Notifications from 'expo-notifications';
 
 TrackPlayer.registerPlaybackService(() => require('./service.js'));
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 export default function RootLayout() {
 
   useEffect(() => {
 
     function rgbToInt(rgb: string) {
-      const result = rgb.match(/\d+/g); // extract numbers
+      const result = rgb.match(/\d+/g); 
       if (!result) return 0; 
       const [r, g, b] = result.map(Number);
-      return (255 << 24) | (r << 16) | (g << 8) | b; // 0xAARRGGBB
+      return (255 << 24) | (r << 16) | (g << 8) | b; 
     }
 
     
@@ -39,6 +49,8 @@ export default function RootLayout() {
       })
       syncTrackPlayer();
     }
+
+
 
     setupPlayer();
     

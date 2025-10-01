@@ -91,19 +91,43 @@ export default function Settings() {
       </ThemedView>
       <TouchableOpacity onPress={() => {
         async function sendTestNotification() {
+
+            Notifications.setNotificationCategoryAsync("music", [
+            {
+              identifier: "PLAY",
+              buttonTitle: "Play",
+              options: { opensAppToForeground: false }
+            },
+            {
+              identifier: "PAUSE",
+              buttonTitle: "Pause",
+              options: { opensAppToForeground: false }
+            }
+          ]);
+
+          const sub = Notifications.addNotificationResponseReceivedListener(response => {
+            const actionId = response.actionIdentifier;
+            if (actionId === "PLAY") {
+              console.log("Play pressed");
+            } else if (actionId === "PAUSE") {
+              console.log("Pause pressed");
+            }
+          });
+
           await Notifications.scheduleNotificationAsync({
             content: {
               title: "Test Notification",
               body: "This is a notification with a button!",
+              categoryIdentifier: "music"
             },
-            trigger: null, // null = immediately
+            trigger: null,
           });
         }
+        console.log("REFRESHING")
         
         sendTestNotification();
 
         syncTrackPlayer()
-        console.log("REFRESHING")
       }}>
         <Feather name="refresh-ccw" size={24} color={theme.colors.lightText} />
       </TouchableOpacity>
