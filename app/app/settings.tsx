@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseUrl, syncTrackPlayer } from "./lib";
 import Feather from "@expo/vector-icons/Feather";
 import { Directory, Paths } from "expo-file-system";
+import * as Notifications from 'expo-notifications';
 
 
 
@@ -89,6 +90,18 @@ export default function Settings() {
         ) : null}
       </ThemedView>
       <TouchableOpacity onPress={() => {
+        async function sendTestNotification() {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Test Notification",
+              body: "This is a notification with a button!",
+            },
+            trigger: null, // null = immediately
+          });
+        }
+        
+        sendTestNotification();
+
         syncTrackPlayer()
         console.log("REFRESHING")
       }}>

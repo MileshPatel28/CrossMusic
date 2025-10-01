@@ -2,7 +2,7 @@ import { theme } from "@/components/theme";
 import Feather from '@expo/vector-icons/Feather';
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 import {syncTrackPlayer} from './lib'
 
 TrackPlayer.registerPlaybackService(() => require('./service.js'));
@@ -10,9 +10,33 @@ TrackPlayer.registerPlaybackService(() => require('./service.js'));
 export default function RootLayout() {
 
   useEffect(() => {
+
+    function rgbToInt(rgb: string) {
+      const result = rgb.match(/\d+/g); // extract numbers
+      if (!result) return 0; 
+      const [r, g, b] = result.map(Number);
+      return (255 << 24) | (r << 16) | (g << 8) | b; // 0xAARRGGBB
+    }
+
     
     async function setupPlayer() {
       await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        notificationCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+        color: rgbToInt(theme.colors.background)
+      })
       syncTrackPlayer();
     }
 

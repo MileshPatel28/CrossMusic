@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { theme } from "@/components/theme";
 import TrackPlayer ,{ Event} from "react-native-track-player";
-import { TextInput, TouchableOpacity,ScrollView, FlatList, Dimensions } from "react-native";
+import { TextInput, TouchableOpacity, FlatList, Dimensions } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import {uploadSong, deleteSong} from './lib'
