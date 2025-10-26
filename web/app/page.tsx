@@ -1,6 +1,6 @@
 'use client'
 
-import { Volume1,Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
+import { VolumeX,Volume,Volume1,Volume2, Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
 import Slider from '@mui/material/Slider';
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -17,6 +17,12 @@ export default function Home() {
     setVolume(newVolume)
   }
 
+  function formatDuration(value: number) {
+    const minute = Math.floor(value / 60);
+    const secondLeft = value - minute * 60;
+    return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
+  }
+
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen p-5 ">
@@ -31,7 +37,9 @@ export default function Home() {
         <div className='flex justify-between items-center w-full'>
 
           <div className='flex w-50 items-center mr-auto'>
-            <Volume1 />
+            {volume >= 60 ? <Volume2/> :
+             volume >= 15 ? <Volume1/> :
+             volume >= 1 ? <Volume /> : <VolumeX />}
             <Slider className='m-5' aria-label="Volume" value={volume} onChange={handleVolume} />
           </div>
 
@@ -48,9 +56,9 @@ export default function Home() {
           </div>
         </div>
         <div className='w-full flex items-center'>
-          <div className='m-2'> 0:00 </div>
+          <div className='m-2'> {formatDuration(trackProgress)} </div>
           <Slider className='m-5' value={trackProgress} min={0} max={duration} onChange={(_,value) => setTrackProgress(value)} />
-          <div className='m-2'> 1:00 </div>
+          <div className='m-2'> -{formatDuration(duration - trackProgress)} </div>
         </div>
       </div>
     </div>
