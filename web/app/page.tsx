@@ -2,19 +2,50 @@
 
 import { VolumeX,Volume,Volume1,Volume2, Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
 import Slider from '@mui/material/Slider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 
 export default function Home() {
 
 
-  const duration = 200;
+  let duration = 200;
   const [volume,setVolume] = useState<number>(30);
   const [trackProgress,setTrackProgress] = useState(0);
   const [paused,setPaused] = useState(true);
 
+  useEffect(() => {
+    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
+    audioElement.volume = volume/100;
+    duration = audioElement.duration
+  },[])
+
   const handleVolume = (event: Event, newVolume : number) => {
+    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
+
     setVolume(newVolume)
+    audioElement.volume = volume/100;
+  }
+  
+  const handlePlayPause = () => {
+    setPaused(!paused);
+
+    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
+
+    if(paused) {
+      audioElement.play();
+    }
+    else {
+      audioElement.pause();
+    }
+    
+  }
+
+  const handleTrackProgress = (_,value) => {
+    setTrackProgress(value)
+    
+    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
+
+    audioElement.currentTime = value;
   }
 
   function formatDuration(value: number) {
@@ -26,6 +57,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen p-5 ">
+
+      {/* Debug Audio */}
+      <audio 
+        id="mainAudio"
+        src="/debugSongs/Blank.mp3"
+        preload="metadata"
+      />
+
       <div className='flex-1 flex items-center justify-center'>
         <Music className='m-5' size={256} />
       </div>
@@ -45,7 +84,7 @@ export default function Home() {
 
           <div className='absolute left-1/2 -translate-x-1/2 gap-2'>
             <IconButton> <ChevronFirst color='white' /> </IconButton>
-            <IconButton onClick={() => setPaused(!paused)}>
+            <IconButton onClick={handlePlayPause}>
               {paused ? (<Play color='white' />) : (<Pause color='white'/>)}
             </IconButton>
             <IconButton> <ChevronLast color='white' /> </IconButton>
@@ -57,7 +96,7 @@ export default function Home() {
         </div>
         <div className='w-full flex items-center'>
           <div className='m-2'> {formatDuration(trackProgress)} </div>
-          <Slider className='m-5' value={trackProgress} min={0} max={duration} onChange={(_,value) => setTrackProgress(value)} />
+          <Slider className='m-5' value={trackProgress} min={0} max={duration} onChange={handleTrackProgress} />
           <div className='m-2'> -{formatDuration(duration - trackProgress)} </div>
         </div>
       </div>

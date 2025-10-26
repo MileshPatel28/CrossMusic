@@ -19,6 +19,7 @@
 
 # production
 /build
+/public/debugSongs
 
 # misc
 .DS_Store
