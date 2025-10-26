@@ -1,6 +1,6 @@
 'use client'
 
-import { Volume1,Music,Play,Pause, ChevronFirst, ChevronLast,Repeat, X } from 'lucide-react';
+import { Volume1,Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
 import Slider from '@mui/material/Slider';
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
