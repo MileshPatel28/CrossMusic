@@ -2,53 +2,59 @@
 
 import { VolumeX,Volume,Volume1,Volume2, Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
 import Slider from '@mui/material/Slider';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
+
 
 export default function Home() {
 
 
-  let duration = 200;
   const [volume,setVolume] = useState<number>(30);
   const [trackProgress,setTrackProgress] = useState(0);
   const [paused,setPaused] = useState(true);
+  const [duration,setDuration] = useState<number>(0);
+
+  const audioRef = useRef(new Audio())
 
   useEffect(() => {
-    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
-    audioElement.volume = volume/100;
-    duration = audioElement.duration
+    audioRef.current.src = encodeURI("http://localhost:3001/songs/Ivan B - Sweaters.mp3")
+    audioRef.current.volume = volume/100;
+    audioRef.current.addEventListener('timeupdate', () => {
+      setTrackProgress(audioRef.current.currentTime)
+    })
+
+    audioRef.current.addEventListener('loadedmetadata', () => {
+      setDuration(audioRef.current.duration)
+      
+    })
+
+    console.log(duration)
   },[])
 
   const handleVolume = (event: Event, newVolume : number) => {
-    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
-
     setVolume(newVolume)
-    audioElement.volume = volume/100;
+    audioRef.current.volume = volume/100;
   }
   
   const handlePlayPause = () => {
     setPaused(!paused);
-
-    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
-
     if(paused) {
-      audioElement.play();
+      audioRef.current.play();
     }
     else {
-      audioElement.pause();
+      audioRef.current.pause();
     }
     
   }
 
   const handleTrackProgress = (_,value) => {
     setTrackProgress(value)
-    
-    const audioElement : HTMLAudioElement = document.getElementById('mainAudio');
 
-    audioElement.currentTime = value;
+    audioRef.current.currentTime = value;
   }
 
   function formatDuration(value: number) {
+    value = Math.round(value)
     const minute = Math.floor(value / 60);
     const secondLeft = value - minute * 60;
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
@@ -57,13 +63,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-screen p-5 ">
-
-      {/* Debug Audio */}
-      <audio 
-        id="mainAudio"
-        src="/debugSongs/Blank.mp3"
-        preload="metadata"
-      />
 
       <div className='flex-1 flex items-center justify-center'>
         <Music className='m-5' size={256} />
