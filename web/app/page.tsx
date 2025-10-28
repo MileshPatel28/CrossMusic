@@ -8,6 +8,8 @@ import IconButton from '@mui/material/IconButton';
 
 export default function Home() {
 
+  const [songs,setSongs] = useState([]);
+  const [songName,setSongName] = useState("N/A");
 
   const [volume,setVolume] = useState<number>(30);
   const [trackProgress,setTrackProgress] = useState(0);
@@ -15,9 +17,25 @@ export default function Home() {
   const [duration,setDuration] = useState<number>(0);
 
   const audioRef = useRef(new Audio())
+  const [currentTrackIndex,setCurrentTrackIndex] = useState(0);
 
   useEffect(() => {
-    audioRef.current.src = encodeURI("http://localhost:3001/songs/Ivan B - Sweaters.mp3")
+
+    async function fetchSongs(){
+      try {
+        const res = await fetch('http://localhost:3001/api/songs')
+        const data = await res.json();
+        setSongs(data)
+        setSongName(data[currentTrackIndex].title)
+        // audioRef.current.src = encodeURI("http://localhost:3001/songs/Ivan B - Sweaters.mp3")
+        
+      }catch{}
+    }
+
+
+
+    fetchSongs()
+
     audioRef.current.volume = volume/100;
     audioRef.current.addEventListener('timeupdate', () => {
       setTrackProgress(audioRef.current.currentTime)
@@ -30,6 +48,13 @@ export default function Home() {
 
     console.log(duration)
   },[])
+
+  useEffect(() => {
+    if(songs != null && songs.length != 0){
+      audioRef.current.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
+    }
+  },[currentTrackIndex, songs])
+
 
   const handleVolume = (event: Event, newVolume : number) => {
     setVolume(newVolume)
@@ -47,6 +72,12 @@ export default function Home() {
     
   }
 
+  const handleNextTrack = () => {
+    setCurrentTrackIndex(currentTrackIndex + 1)
+    setSongName(songs[currentTrackIndex].title)
+    console.log(currentTrackIndex)
+  }
+
   const handleTrackProgress = (_,value) => {
     setTrackProgress(value)
 
@@ -54,10 +85,14 @@ export default function Home() {
   }
 
   function formatDuration(value: number) {
-    value = Math.round(value)
-    const minute = Math.floor(value / 60);
-    const secondLeft = value - minute * 60;
-    return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
+    const hrs = Math.floor(value / 3600);
+    const mins = Math.floor((value % 3600) / 60);
+    const secs = Math.floor(value % 60);
+
+    if (hrs > 0) {
+      return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+    return `${mins}:${String(secs).padStart(2, "0")}`;
   }
 
 
@@ -69,7 +104,7 @@ export default function Home() {
       </div>
       <div className='w-full'>
         <div className='items-center justify-center w-full flex'>
-          Music Name
+          {songName}
         </div>
 
         <div className='flex justify-between items-center w-full'>
@@ -86,7 +121,7 @@ export default function Home() {
             <IconButton onClick={handlePlayPause}>
               {paused ? (<Play color='white' />) : (<Pause color='white'/>)}
             </IconButton>
-            <IconButton> <ChevronLast color='white' /> </IconButton>
+            <IconButton onClick={handleNextTrack}> <ChevronLast color='white' /> </IconButton>
           </div>
 
           <div className='ml-auto mr-2'>
