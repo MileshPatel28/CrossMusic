@@ -1,42 +1,43 @@
 'use client'
 
-import { VolumeX,Volume,Volume1,Volume2, Music,Play,Pause, ChevronFirst, ChevronLast,Repeat } from 'lucide-react';
+import { VolumeX, Volume, Volume1, Volume2, Music, Play, Pause, ChevronFirst, ChevronLast, Repeat, Search } from 'lucide-react';
 import Slider from '@mui/material/Slider';
 import { useEffect, useRef, useState } from 'react';
+import Popup from 'reactjs-popup';
 import IconButton from '@mui/material/IconButton';
 
 
 export default function Home() {
 
-  const [songs,setSongs] = useState<{title : string,url: string}[]>([]);
-  const [songName,setSongName] = useState("N/A");
-  const [duration,setDuration] = useState<number>(0);
+  const [songs, setSongs] = useState<{ title: string, url: string }[]>([]);
+  const [songName, setSongName] = useState("N/A");
+  const [duration, setDuration] = useState<number>(0);
 
-  const [volume,setVolume] = useState<number>(30);
-  const [trackProgress,setTrackProgress] = useState(0);
-  const [paused,setPaused] = useState(true);
+  const [volume, setVolume] = useState<number>(30);
+  const [trackProgress, setTrackProgress] = useState(0);
+  const [paused, setPaused] = useState(true);
 
   const audioRef = useRef(new Audio())
-  const [currentTrackIndex,setCurrentTrackIndex] = useState(0);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
-  const [looped,setLooped] = useState(false)
+  const [looped, setLooped] = useState(false)
 
-  const handleVolume = (event: Event, newVolume : number) => {
+  const handleVolume = (event: Event, newVolume: number) => {
     setVolume(newVolume)
-    audioRef.current.volume = volume/100;
+    audioRef.current.volume = volume / 100;
   }
-  
+
   const handlePlayPause = () => {
     const newPauseValue = !paused;
 
     setPaused(newPauseValue);
-    if(!newPauseValue) {
+    if (!newPauseValue) {
       audioRef.current.play();
     }
     else {
       audioRef.current.pause();
     }
-    
+
   }
 
   const handlePreviousTrack = () => {
@@ -46,16 +47,16 @@ export default function Home() {
   }
 
   const handleNextTrack = () => {
-    if(!looped){
+    if (!looped) {
       const newIndex = (currentTrackIndex + 1 >= songs.length) ? 0 : currentTrackIndex + 1;
       setCurrentTrackIndex(newIndex)
       setSongName(songs[newIndex].title)
     }
 
-    
+
   }
 
-  const handleTrackProgress = (_ : Event,value : number) => {
+  const handleTrackProgress = (_: Event, value: number) => {
     setTrackProgress(value)
     audioRef.current.currentTime = value;
   }
@@ -74,21 +75,21 @@ export default function Home() {
 
   useEffect(() => {
 
-    async function fetchSongs(){
+    async function fetchSongs() {
       try {
         const res = await fetch('http://localhost:3001/api/songs')
         const data = await res.json();
         setSongs(data)
         setSongName(data[currentTrackIndex].title)
-        
-      }catch{}
+
+      } catch { }
     }
 
 
 
     fetchSongs()
 
-    audioRef.current.volume = volume/100;
+    audioRef.current.volume = volume / 100;
 
     audioRef.current.addEventListener('timeupdate', () => {
       setTrackProgress(audioRef.current.currentTime)
@@ -100,24 +101,24 @@ export default function Home() {
 
 
 
-  },[])
+  }, [])
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if(songs != null && songs.length != 0){
+    if (songs != null && songs.length != 0) {
       audio.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
-      if(!paused) audio.play()
+      if (!paused) audio.play()
 
-      audio.addEventListener('ended',handleNextTrack)
+      audio.addEventListener('ended', handleNextTrack)
 
     }
 
     return () => {
-      audio.removeEventListener('ended',handleNextTrack)
+      audio.removeEventListener('ended', handleNextTrack)
     }
 
-  },[currentTrackIndex,songs])
+  }, [currentTrackIndex, songs])
 
   useEffect(() => {
     audioRef.current.loop = looped;
@@ -127,41 +128,69 @@ export default function Home() {
 
 
   return (
-    <div className="flex flex-col items-center justify-between w-full h-screen p-5 ">
-
-      <div className='flex-1 flex items-center justify-center'>
-        <Music className='m-5' size={256} />
+    <div className='flex flex-col items-center'>
+      <div className='absolute z-10 border-2 p-5 rounded-lg bg-black flex flex-col items-center blur-none t-5 '>
+        <div className='m-2'> Search Song </div>
+        <input className='border-b-2 border-white-900' type='text' />
+        <ul className='m-5 space-y-3'>
+          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
+            <label> 1 </label>
+            <label> TESTtESTESTTESTSETET </label>
+            <label> 1:00 </label>
+          </li>
+          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
+            <label> 1 </label>
+            <label> Removeable </label>
+            <label> 1:00 </label>
+          </li>
+          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
+            <label> 1 </label>
+            <label> test </label>
+            <label> 1:00 </label>
+          </li>
+        </ul>
       </div>
-      <div className='w-full'>
-        <div className='items-center justify-center w-full flex'>
-          {songName}
+
+      <div className="flex flex-col items-center justify-between w-full h-screen p-5"> {/* blur-lg */}
+        <IconButton> <Search color='white' /> </IconButton>
+
+
+
+
+        <div className='flex-1 flex items-center justify-center'>
+          <Music className='m-5' size={256} />
         </div>
-
-        <div className='flex justify-between items-center w-full'>
-
-          <div className='flex w-50 items-center mr-auto'>
-            {volume >= 60 ? <Volume2/> :
-             volume >= 15 ? <Volume1/> :
-             volume >= 1 ? <Volume /> : <VolumeX />}
-            <Slider className='m-5' aria-label="Volume" value={volume} onChange={handleVolume} />
+        <div className='w-full'>
+          <div className='items-center justify-center w-full flex'>
+            {songName}
           </div>
 
-          <div className='absolute left-1/2 -translate-x-1/2 gap-2'>
-            <IconButton onClick={handlePreviousTrack}> <ChevronFirst color='white' /> </IconButton>
-            <IconButton onClick={handlePlayPause}>
-              {paused ?  (<Play color='white' />) :  (<Pause color='white'/>)}
-            </IconButton>
-            <IconButton onClick={handleNextTrack}> <ChevronLast color='white' /> </IconButton>
-          </div>
+          <div className='flex justify-between items-center w-full'>
 
-          <div className='ml-auto mr-2'>
-            <IconButton onClick={() => setLooped(!looped)}> <Repeat color={looped ? 'rgb(25, 118, 210)' : 'white'} /> </IconButton>
+            <div className='flex w-50 items-center mr-auto'>
+              {volume >= 60 ? <Volume2 /> :
+                volume >= 15 ? <Volume1 /> :
+                  volume >= 1 ? <Volume /> : <VolumeX />}
+              <Slider className='m-5' aria-label="Volume" value={volume} onChange={handleVolume} />
+            </div>
+
+            <div className='absolute left-1/2 -translate-x-1/2 gap-2'>
+              <IconButton onClick={handlePreviousTrack}> <ChevronFirst color='white' /> </IconButton>
+              <IconButton onClick={handlePlayPause}>
+                {paused ? (<Play color='white' />) : (<Pause color='white' />)}
+              </IconButton>
+              <IconButton onClick={handleNextTrack}> <ChevronLast color='white' /> </IconButton>
+            </div>
+
+            <div className='ml-auto mr-2'>
+              <IconButton onClick={() => setLooped(!looped)}> <Repeat color={looped ? 'rgb(25, 118, 210)' : 'white'} /> </IconButton>
+            </div>
           </div>
-        </div>
-        <div className='w-full flex items-center'>
-          <div className='m-2'> {formatDuration(trackProgress)} </div>
-          <Slider className='m-5' value={trackProgress} min={0} max={duration} onChange={handleTrackProgress} />
-          <div className='m-2'> -{formatDuration(duration - trackProgress)} </div>
+          <div className='w-full flex items-center'>
+            <div className='m-2'> {formatDuration(trackProgress)} </div>
+            <Slider className='m-5' value={trackProgress} min={0} max={duration} onChange={handleTrackProgress} />
+            <div className='m-2'> -{formatDuration(duration - trackProgress)} </div>
+          </div>
         </div>
       </div>
     </div>
