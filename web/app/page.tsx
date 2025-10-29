@@ -8,53 +8,18 @@ import IconButton from '@mui/material/IconButton';
 
 export default function Home() {
 
-  const [songs,setSongs] = useState([]);
+  const [songs,setSongs] = useState<{title : string,url: string}[]>([]);
   const [songName,setSongName] = useState("N/A");
+  const [duration,setDuration] = useState<number>(0);
 
   const [volume,setVolume] = useState<number>(30);
   const [trackProgress,setTrackProgress] = useState(0);
   const [paused,setPaused] = useState(true);
-  const [duration,setDuration] = useState<number>(0);
 
   const audioRef = useRef(new Audio())
   const [currentTrackIndex,setCurrentTrackIndex] = useState(0);
 
-  useEffect(() => {
-
-    async function fetchSongs(){
-      try {
-        const res = await fetch('http://localhost:3001/api/songs')
-        const data = await res.json();
-        setSongs(data)
-        setSongName(data[currentTrackIndex].title)
-        // audioRef.current.src = encodeURI("http://localhost:3001/songs/Ivan B - Sweaters.mp3")
-        
-      }catch{}
-    }
-
-
-
-    fetchSongs()
-
-    audioRef.current.volume = volume/100;
-    audioRef.current.addEventListener('timeupdate', () => {
-      setTrackProgress(audioRef.current.currentTime)
-    })
-
-    audioRef.current.addEventListener('loadedmetadata', () => {
-      setDuration(audioRef.current.duration)
-      
-    })
-
-    console.log(duration)
-  },[])
-
-  useEffect(() => {
-    if(songs != null && songs.length != 0){
-      audioRef.current.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
-    }
-  },[currentTrackIndex, songs])
-
+  const [looped,setLooped] = useState(false)
 
   const handleVolume = (event: Event, newVolume : number) => {
     setVolume(newVolume)
@@ -62,8 +27,10 @@ export default function Home() {
   }
   
   const handlePlayPause = () => {
-    setPaused(!paused);
-    if(paused) {
+    const newPauseValue = !paused;
+
+    setPaused(newPauseValue);
+    if(!newPauseValue) {
       audioRef.current.play();
     }
     else {
@@ -72,17 +39,27 @@ export default function Home() {
     
   }
 
-  const handleNextTrack = () => {
-    setCurrentTrackIndex(currentTrackIndex + 1)
-    setSongName(songs[currentTrackIndex].title)
-    console.log(currentTrackIndex)
+  const handlePreviousTrack = () => {
+    const newIndex = (currentTrackIndex - 1 < 0) ? songs.length - 1 : currentTrackIndex - 1;
+    setCurrentTrackIndex(newIndex)
+    setSongName(songs[newIndex].title)
   }
 
-  const handleTrackProgress = (_,value) => {
-    setTrackProgress(value)
+  const handleNextTrack = () => {
+    if(!looped){
+      const newIndex = (currentTrackIndex + 1 >= songs.length) ? 0 : currentTrackIndex + 1;
+      setCurrentTrackIndex(newIndex)
+      setSongName(songs[newIndex].title)
+    }
 
+    
+  }
+
+  const handleTrackProgress = (_ : Event,value : number) => {
+    setTrackProgress(value)
     audioRef.current.currentTime = value;
   }
+
 
   function formatDuration(value: number) {
     const hrs = Math.floor(value / 3600);
@@ -94,6 +71,59 @@ export default function Home() {
     }
     return `${mins}:${String(secs).padStart(2, "0")}`;
   }
+
+  useEffect(() => {
+
+    async function fetchSongs(){
+      try {
+        const res = await fetch('http://localhost:3001/api/songs')
+        const data = await res.json();
+        setSongs(data)
+        setSongName(data[currentTrackIndex].title)
+        
+      }catch{}
+    }
+
+
+
+    fetchSongs()
+
+    audioRef.current.volume = volume/100;
+
+    audioRef.current.addEventListener('timeupdate', () => {
+      setTrackProgress(audioRef.current.currentTime)
+    })
+
+    audioRef.current.addEventListener('loadedmetadata', () => {
+      setDuration(audioRef.current.duration)
+    })
+
+
+
+  },[])
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if(songs != null && songs.length != 0){
+      audio.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
+      if(!paused) audio.play()
+
+      audio.addEventListener('ended',handleNextTrack)
+
+    }
+
+    return () => {
+      audio.removeEventListener('ended',handleNextTrack)
+    }
+
+  },[currentTrackIndex,songs])
+
+  useEffect(() => {
+    audioRef.current.loop = looped;
+  }, [looped]);
+
+
 
 
   return (
@@ -117,15 +147,15 @@ export default function Home() {
           </div>
 
           <div className='absolute left-1/2 -translate-x-1/2 gap-2'>
-            <IconButton> <ChevronFirst color='white' /> </IconButton>
+            <IconButton onClick={handlePreviousTrack}> <ChevronFirst color='white' /> </IconButton>
             <IconButton onClick={handlePlayPause}>
-              {paused ? (<Play color='white' />) : (<Pause color='white'/>)}
+              {paused ?  (<Play color='white' />) :  (<Pause color='white'/>)}
             </IconButton>
             <IconButton onClick={handleNextTrack}> <ChevronLast color='white' /> </IconButton>
           </div>
 
           <div className='ml-auto mr-2'>
-            <IconButton > <Repeat color='white' /> </IconButton>
+            <IconButton onClick={() => setLooped(!looped)}> <Repeat color={looped ? 'rgb(25, 118, 210)' : 'white'} /> </IconButton>
           </div>
         </div>
         <div className='w-full flex items-center'>
