@@ -17,14 +17,51 @@ export default function Home() {
   const [trackProgress, setTrackProgress] = useState(0);
   const [paused, setPaused] = useState(true);
 
-  const audioRef = useRef(new Audio())
+  const audioRef = useRef(
+    typeof window !== "undefined" ? new Audio("/path/to/audio.mp3") : null
+  );
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   const [looped, setLooped] = useState(false)
   const [searchBoxOpened, setSearchBoxOpened] = useState(false)
   const [searchText,setSearchText] = useState("")
 
+  useEffect(() => {
+
+    async function fetchSongs() {
+      try {
+        const res = await fetch('http://localhost:3001/api/songs')
+        const data = await res.json();
+        setSongs(data)
+        setSongName(data[currentTrackIndex].title)
+
+      } catch { }
+    }
+
+
+
+    fetchSongs()
+
+    if(audioRef.current != null){
+      audioRef.current.volume = volume / 100;
+
+      audioRef.current.addEventListener('timeupdate', () => {
+        if(audioRef.current == null) return; 
+        setTrackProgress(audioRef.current.currentTime)
+      })
+
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        if(audioRef.current == null) return; 
+        setDuration(audioRef.current.duration)
+      })
+    }
+
+
+  }, [])
+
+
   const handleVolume = (event: Event, newVolume: number) => {
+    if(audioRef.current == null) return; 
     setVolume(newVolume)
     audioRef.current.volume = volume / 100;
   }
@@ -34,9 +71,11 @@ export default function Home() {
 
     setPaused(newPauseValue);
     if (!newPauseValue) {
+      if(audioRef.current == null) return; 
       audioRef.current.play();
     }
     else {
+      if(audioRef.current == null) return; 
       audioRef.current.pause();
     }
 
@@ -59,6 +98,7 @@ export default function Home() {
   }
 
   const handleTrackProgress = (_: Event, value: number) => {
+    if(audioRef.current == null) return; 
     setTrackProgress(value)
     audioRef.current.currentTime = value;
   }
@@ -75,40 +115,11 @@ export default function Home() {
     return `${mins}:${String(secs).padStart(2, "0")}`;
   }
 
-  useEffect(() => {
-
-    async function fetchSongs() {
-      try {
-        const res = await fetch('http://localhost:3001/api/songs')
-        const data = await res.json();
-        setSongs(data)
-        setSongName(data[currentTrackIndex].title)
-
-      } catch { }
-    }
-
-
-
-    fetchSongs()
-
-    audioRef.current.volume = volume / 100;
-
-    audioRef.current.addEventListener('timeupdate', () => {
-      setTrackProgress(audioRef.current.currentTime)
-    })
-
-    audioRef.current.addEventListener('loadedmetadata', () => {
-      setDuration(audioRef.current.duration)
-    })
-
-
-
-  }, [])
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (songs != null && songs.length != 0) {
+    if (songs != null && songs.length != 0 && audio != null) {
       audio.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
       if (!paused) audio.play()
 
@@ -117,12 +128,15 @@ export default function Home() {
     }
 
     return () => {
-      audio.removeEventListener('ended', handleNextTrack)
+      if(audio != null){
+        audio.removeEventListener('ended', handleNextTrack)
+      }
     }
 
   }, [currentTrackIndex, songs])
 
   useEffect(() => {
+    if(audioRef.current == null) return;
     audioRef.current.loop = looped;
   }, [looped]);
 
