@@ -22,9 +22,8 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-app.get('/', (req, res) => {
-  res.sendFile('')
-})
+app.use(express.static('public'))
+
 
 app.listen(port, () => {
   console.log(`CrossMusic Server on port ${port}`)

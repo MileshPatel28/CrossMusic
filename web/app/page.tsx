@@ -146,7 +146,7 @@ export default function Home() {
   return (
     <div className='flex flex-col items-center'>
       {searchBoxOpened &&
-      <div className='absolute z-10 border-2 p-5 rounded-lg bg-black flex flex-col items-center blur-none t-5 '>
+      <div className='absolute z-10 border-2 p-5 rounded-lg bg-black flex flex-col items-center blur-none t-5 m-5'>
         <div className='ml-auto mr-2'>
           <IconButton onClick={() => {
             setSearchText("");
@@ -179,7 +179,7 @@ export default function Home() {
         </ul>
       </div>
       }
-      <div className="flex flex-col items-center justify-between w-full h-screen p-5"> {/* blur-lg */}
+      <div className="flex flex-col items-center justify-between w-full h-screen p-5" style={{filter: (searchBoxOpened) ? 'blur(var(--blur-sm))' : ''}}> {/* blur-lg */}
         <IconButton onClick={() => setSearchBoxOpened(true)}> <Search color='white' /> </IconButton>
 
 
