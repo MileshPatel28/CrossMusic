@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.sendFile('')
 })
 
 app.listen(port, () => {
