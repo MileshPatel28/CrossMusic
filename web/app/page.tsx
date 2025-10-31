@@ -1,9 +1,8 @@
 'use client'
 
-import { VolumeX, Volume, Volume1, Volume2, Music, Play, Pause, ChevronFirst, ChevronLast, Repeat, Search, X } from 'lucide-react';
+import { VolumeX, Volume, Volume1, Volume2, Music, Play, Pause, ChevronFirst, ChevronLast, Repeat, Search, X,Plus } from 'lucide-react';
 import Slider from '@mui/material/Slider';
-import { useEffect, useRef, useState } from 'react';
-import Popup from 'reactjs-popup';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 
 
@@ -18,13 +17,15 @@ export default function Home() {
   const [paused, setPaused] = useState(true);
 
   const audioRef = useRef(
-    typeof window !== "undefined" ? new Audio("/path/to/audio.mp3") : null
+    typeof window !== "undefined" ? new Audio() : null
   );
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   const [looped, setLooped] = useState(false)
   const [searchBoxOpened, setSearchBoxOpened] = useState(false)
   const [searchText,setSearchText] = useState("")
+
+  const addFileInputRef = useRef<HTMLInputElement>(null)  
 
   useEffect(() => {
 
@@ -104,6 +105,15 @@ export default function Home() {
   }
 
 
+  const handleInputClick = () => {
+    addFileInputRef.current?.click()
+  }
+
+  const handleFileAddition = (event : ChangeEvent<HTMLInputElement>) => {
+    console.log(event)
+  }
+
+
   function formatDuration(value: number) {
     const hrs = Math.floor(value / 3600);
     const mins = Math.floor((value % 3600) / 60);
@@ -144,6 +154,7 @@ export default function Home() {
 
 
   return (
+    // Search Song context box
     <div className='flex flex-col items-center'>
       {searchBoxOpened &&
       <div className='absolute z-10 border-2 p-5 rounded-lg bg-black flex flex-col items-center blur-none t-5 m-5'>
@@ -179,11 +190,16 @@ export default function Home() {
         </ul>
       </div>
       }
+
+      {/* Main page*/}
       <div className="flex flex-col items-center justify-between w-full h-screen p-5" style={{filter: (searchBoxOpened) ? 'blur(var(--blur-sm))' : ''}}> {/* blur-lg */}
-        <IconButton onClick={() => setSearchBoxOpened(true)}> <Search color='white' /> </IconButton>
-
-
-
+        <div className='flex flex-row'>
+          <IconButton onClick={() => setSearchBoxOpened(true)}> <Search color='white' /> </IconButton>
+          <input onChange={handleFileAddition} ref={addFileInputRef} type={'file'} style={{display: 'none'}}/>
+          <IconButton onClick={handleInputClick}> 
+            <Plus color='white' /> 
+           </IconButton>
+        </div>
 
         <div className='flex-1 flex items-center justify-center'>
           <Music className='m-5' size={256} />
