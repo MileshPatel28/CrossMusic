@@ -1,6 +1,6 @@
 'use client'
 
-import { VolumeX, Volume, Volume1, Volume2, Music, Play, Pause, ChevronFirst, ChevronLast, Repeat, Search } from 'lucide-react';
+import { VolumeX, Volume, Volume1, Volume2, Music, Play, Pause, ChevronFirst, ChevronLast, Repeat, Search, X } from 'lucide-react';
 import Slider from '@mui/material/Slider';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
@@ -21,6 +21,8 @@ export default function Home() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   const [looped, setLooped] = useState(false)
+  const [searchBoxOpened, setSearchBoxOpened] = useState(false)
+  const [searchText,setSearchText] = useState("")
 
   const handleVolume = (event: Event, newVolume: number) => {
     setVolume(newVolume)
@@ -129,30 +131,42 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center'>
+      {searchBoxOpened &&
       <div className='absolute z-10 border-2 p-5 rounded-lg bg-black flex flex-col items-center blur-none t-5 '>
+        <div className='ml-auto mr-2'>
+          <IconButton onClick={() => {
+            setSearchText("");
+            setSearchBoxOpened(false)}
+          }> 
+            <X color={'white'} /> 
+          </IconButton>
+        </div>
         <div className='m-2'> Search Song </div>
-        <input className='border-b-2 border-white-900' type='text' />
-        <ul className='m-5 space-y-3'>
-          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
-            <label> 1 </label>
-            <label> TESTtESTESTTESTSETET </label>
-            <label> 1:00 </label>
-          </li>
-          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
-            <label> 1 </label>
-            <label> Removeable </label>
-            <label> 1:00 </label>
-          </li>
-          <li className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
-            <label> 1 </label>
-            <label> test </label>
-            <label> 1:00 </label>
-          </li>
+        <input onChange={(event) => setSearchText(event.target.value.toLowerCase())} className='border-b-2 border-white-900' type='text' />
+        
+        <ul className='m-5 space-y-3 h-100 w-150 overflow-y-scroll'>
+          {songs.map((value,index) => {
+
+            function switchToSong(){
+              setCurrentTrackIndex(index)
+              setSongName(songs[index].title)
+            }
+            
+            if(value.title.toLowerCase().includes(searchText)){
+              return (<li key={index} >
+                <div onClick={switchToSong} style={{cursor: 'pointer'}} className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
+                  <label onClick={switchToSong} style={{cursor: 'pointer'}} className='unselectable'> {index + 1} </label>
+                  <label onClick={switchToSong} style={{cursor: 'pointer'}} className='unselectable'> {value.title} </label>
+                </div>
+              </li>)
+            }
+
+          })}
         </ul>
       </div>
-
+      }
       <div className="flex flex-col items-center justify-between w-full h-screen p-5"> {/* blur-lg */}
-        <IconButton> <Search color='white' /> </IconButton>
+        <IconButton onClick={() => setSearchBoxOpened(true)}> <Search color='white' /> </IconButton>
 
 
 
@@ -196,3 +210,4 @@ export default function Home() {
     </div>
   );
 }
+
