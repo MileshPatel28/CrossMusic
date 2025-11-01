@@ -27,7 +27,9 @@ export default function Home() {
 
   const addFileInputRef = useRef<HTMLInputElement>(null)  
 
+  
   useEffect(() => {
+
 
     async function fetchSongs() {
       try {
@@ -38,7 +40,6 @@ export default function Home() {
 
       } catch { }
     }
-
 
 
     fetchSongs()
@@ -109,8 +110,40 @@ export default function Home() {
     addFileInputRef.current?.click()
   }
 
-  const handleFileAddition = (event : ChangeEvent<HTMLInputElement>) => {
-    console.log(event)
+  const handleFileAddition = async (event : ChangeEvent<HTMLInputElement>) => {
+    if(event.target.files && event.target.files[0]){
+      const body = new FormData()
+      
+      async function fetchSongs() {
+        try {
+          const res = await fetch('http://localhost:3001/api/songs')
+          const data = await res.json();
+          setSongs(data)
+          setSongName(data[currentTrackIndex].title)
+
+        } catch { }
+      }
+
+      for(const file of event.target.files){
+        body.append("songs",file)
+      }
+
+      try{
+        await fetch('http://localhost:3001/api/upload', {
+          method: "POST",
+          body: body
+        })
+
+
+        fetchSongs()
+
+
+      }catch(err){
+        console.log(err)
+      }
+
+
+    }
   }
 
 

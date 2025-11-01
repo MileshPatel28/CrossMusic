@@ -17,7 +17,8 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "api/songs"));
   },
   filename: (req, file, cb) => {
-    cb(null,decodeURIComponent(file.originalname))
+    const utf8Name = Buffer.from(file.originalname, "latin1").toString("utf8");
+    cb(null,utf8Name)
   }
 })
 const upload = multer({ storage: storage })
@@ -60,7 +61,7 @@ app.get('/api/songs', (req,res) => {
 
 
 app.post('/api/upload',upload.array("songs"), (req,res) => {
-  const uploadedFiles = req.files.map((file) => decodeURIComponent(file.filename));
+  const uploadedFiles = req.files.map((file) => file.filename);
   res.json({sucess: true, files: uploadedFiles})
 })
 
