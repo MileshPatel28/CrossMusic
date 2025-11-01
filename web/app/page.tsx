@@ -202,19 +202,35 @@ export default function Home() {
         <div className='m-2'> Search Song </div>
         <input onChange={(event) => setSearchText(event.target.value.toLowerCase())} className='border-b-2 border-white-900' type='text' />
         
-        <ul className='m-5 space-y-3 h-100 w-150 overflow-y-scroll'>
-          {songs.map((value,index) => {
+        <ul className='m-5 space-y-3 h-100 w-200 overflow-y-scroll'>
+          {songs.map((song,index) => {
 
             function switchToSong(){
               setCurrentTrackIndex(index)
               setSongName(songs[index].title)
             }
+
+            async function deleteSong(){
+                async function fetchSongs() {
+                try {
+                  const res = await fetch('http://localhost:3001/api/songs')
+                  const data = await res.json();
+                  setSongs(data)
+                  setSongName(data[currentTrackIndex].title)
+
+                } catch { }
+              }
+
+              await fetch(`http://localhost:3001/delete/${encodeURIComponent(song.title)}`, { method: "DELETE" });
+              fetchSongs()
+            }
             
-            if(value.title.toLowerCase().includes(searchText)){
+            if(song.title.toLowerCase().includes(searchText)){
               return (<li key={index} >
-                <div onClick={switchToSong} style={{cursor: 'pointer'}} className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between'>
+                <div onClick={switchToSong} style={{cursor: 'pointer'}} className='flex flex-row space-x-5 border-t-2 border-b-2 border-white-900 justify-between items-center'>
                   <label onClick={switchToSong} style={{cursor: 'pointer'}} className='unselectable'> {index + 1} </label>
-                  <label onClick={switchToSong} style={{cursor: 'pointer'}} className='unselectable'> {value.title} </label>
+                  <label onClick={switchToSong} style={{cursor: 'pointer'}} className='unselectable'> {song.title} </label>
+                  <IconButton onClick={deleteSong}> <X color='white'/> </IconButton>
                 </div>
               </li>)
             }
