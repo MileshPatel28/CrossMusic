@@ -8,6 +8,8 @@ import IconButton from '@mui/material/IconButton';
 
 export default function Home() {
 
+  const baseURL = 'http://localhost:3001'
+
   const [songs, setSongs] = useState<{ title: string, url: string }[]>([]);
   const [songName, setSongName] = useState("N/A");
   const [duration, setDuration] = useState<number>(0);
@@ -28,12 +30,13 @@ export default function Home() {
   const addFileInputRef = useRef<HTMLInputElement>(null)  
 
   
+  
   useEffect(() => {
 
 
     async function fetchSongs() {
       try {
-        const res = await fetch('http://localhost:3001/api/songs')
+        const res = await fetch(baseURL + '/api/songs')
         const data = await res.json();
         setSongs(data)
         setSongName(data[currentTrackIndex].title)
@@ -116,7 +119,7 @@ export default function Home() {
       
       async function fetchSongs() {
         try {
-          const res = await fetch('http://localhost:3001/api/songs')
+          const res = await fetch(baseURL + '/api/songs')
           const data = await res.json();
           setSongs(data)
           setSongName(data[currentTrackIndex].title)
@@ -129,7 +132,7 @@ export default function Home() {
       }
 
       try{
-        await fetch('http://localhost:3001/api/upload', {
+        await fetch(baseURL + '/api/upload', {
           method: "POST",
           body: body
         })
@@ -163,7 +166,7 @@ export default function Home() {
     const audio = audioRef.current;
 
     if (songs != null && songs.length != 0 && audio != null) {
-      audio.src = encodeURI("http://localhost:3001" + songs[currentTrackIndex].url)
+      audio.src = encodeURI(baseURL + songs[currentTrackIndex].url)
       if (!paused) audio.play()
 
       audio.addEventListener('ended', handleNextTrack)
@@ -213,7 +216,7 @@ export default function Home() {
             async function deleteSong(){
                 async function fetchSongs() {
                 try {
-                  const res = await fetch('http://localhost:3001/api/songs')
+                  const res = await fetch(baseURL + '/api/songs')
                   const data = await res.json();
                   setSongs(data)
                   setSongName(data[currentTrackIndex].title)
@@ -221,7 +224,7 @@ export default function Home() {
                 } catch { }
               }
 
-              await fetch(`http://localhost:3001/delete/${encodeURIComponent(song.title)}`, { method: "DELETE" });
+              await fetch(baseURL + `/delete/${encodeURIComponent(song.title)}`, { method: "DELETE" });
               fetchSongs()
             }
             
