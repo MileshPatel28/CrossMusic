@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cross Music",
+  title: "🎵 Cross Music",
   description: "Syncing music across devices!",
 };
 
