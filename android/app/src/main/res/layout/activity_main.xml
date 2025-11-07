@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black_light"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -24,7 +25,9 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/baseline_search_24" />
+            android:backgroundTint="@color/background_transparent"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/search" />
 
         <Space
             android:layout_width="32dp"
@@ -36,7 +39,9 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/outline_add_24" />
+            android:backgroundTint="@color/background_transparent"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/plus" />
 
     </LinearLayout>
 
@@ -45,11 +50,14 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginBottom="16dp"
+        android:tint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/songNameTv"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:srcCompat="@drawable/baseline_music_note_24" />
+        app:layout_constraintVertical_bias="0.508"
+        app:srcCompat="@drawable/music" />
 
     <TextView
         android:id="@+id/songNameTv"
@@ -57,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="TextView"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -75,19 +84,25 @@
             android:id="@+id/btnPrevious"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_skip_previous_24" />
+            android:backgroundTint="@color/background_transparent"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/chevron_first" />
 
         <ImageButton
             android:id="@+id/btnPlayPause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_play_arrow_24" />
+            android:backgroundTint="@color/background_transparent"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/play" />
 
         <ImageButton
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_skip_next_24" />
+            android:backgroundTint="@color/background_transparent"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/chevron_last" />
 
     </LinearLayout>
 
@@ -109,6 +124,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:text="00:00"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -119,6 +135,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:text="-00:00"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
