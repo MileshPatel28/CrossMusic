@@ -3,6 +3,7 @@ package com.github.mileshpatel28.crossmusic
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,7 +23,10 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater);
 
-        val url = "http://<server_adresse>:3001/songs/Blank.mp3"
+        val url = "http://${getString(R.string.server_adresse)}:3001/songs/Blank.mp3"
+
+        Log.v("DEBUG", url);
+
         val mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
