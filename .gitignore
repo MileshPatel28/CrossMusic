@@ -64,3 +64,4 @@ android/build/
 # Project Specific
 app/assets/test_music/
 backend/api/songs/*
+backend/certs

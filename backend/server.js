@@ -6,9 +6,18 @@ const fs = require("fs")
 const fsP = require("fs/promises")
 const path = require("path")
 const multer = require("multer")
-
+const https = require('https')
 
 app.use(cors())
+
+var key = fs.readFileSync(__dirname + '/certs/selfsigned.key');
+var cert = fs.readFileSync(__dirname + '/certs/selfsigned.crt');
+var options = {
+  key: key,
+  cert: cert
+};
+
+
 
 const songsDir = path.join(__dirname, "api/songs");
 
@@ -26,10 +35,15 @@ const upload = multer({ storage: storage })
 app.use(express.static('public'))
 
 
-app.listen(port, () => {
-  console.log(`CrossMusic Server on port ${port}`)
-})
+// app.listen(port, () => {
+//   console.log(`CrossMusic Server on port ${port}`)
+// })
 
+var server = https.createServer(options, app);
+
+server.listen(port, () => {
+  console.log("server starting on port : " + port)
+});
 
 // ============================================ MUSIC SERVER API ====================================================== //
 
