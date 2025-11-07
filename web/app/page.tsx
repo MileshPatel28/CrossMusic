@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 
 export default function Home() {
 
-  const baseURL = 'http://localhost:3001'
+  const baseURL = 'https://localhost:3001'
 
   const [songs, setSongs] = useState<{ title: string, url: string }[]>([]);
   const [songName, setSongName] = useState("N/A");

@@ -6,6 +6,8 @@ const fs = require("fs")
 const fsP = require("fs/promises")
 const path = require("path")
 const multer = require("multer")
+
+const http = require('http');
 const https = require('https')
 
 app.use(cors())
@@ -39,11 +41,16 @@ app.use(express.static('public'))
 //   console.log(`CrossMusic Server on port ${port}`)
 // })
 
-var server = https.createServer(options, app);
+var serverHTTP = http.createServer(app);
+var serverHTTPS = https.createServer(options, app);
 
-server.listen(port, () => {
+serverHTTPS.listen(port, () => {
   console.log("server starting on port : " + port)
-});
+})
+
+serverHTTP.listen(port + 1, () => {
+  console.log('http server starting on port : ' + (port + 1))
+})
 
 // ============================================ MUSIC SERVER API ====================================================== //
 
